@@ -570,4 +570,62 @@ swiper-slide-active h3 {
 
 </div>
   
-  <app-client-footer></app-client-footer>
+<footer class="footer">
+  <div class="footer-container">
+
+    <div class="footer-row">
+
+      <!-- About -->
+      <div class="footer-col about">
+        <h6 class="footer-logo">
+          <img src="assets/images/toppicktravel-removebg-preview.png" alt="Logo" height="50">
+          Top Picks Travels
+
+        </h6>
+        <p class="footer-desc">
+          {{ 'FOOTER.DESC' | t }}        </p>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="footer-col">
+        <h6 class="footer-title"> {{ 'FOOTER.QUICK_LINKS' | t }}</h6>
+        <a routerLink="home">{{ 'NAV.HOME' | t }}</a>
+        <a routerLink="product">{{ 'NAV.PRODUCTS' | t }}</a>
+        <a routerLink="brands">{{ 'NAV.BRANDS' | t }}</a>
+        <a routerLink="categories">{{ 'NAV.CATEGORIES' | t }}</a>
+      </div>
+
+      <!-- Customer Service -->
+      <div class="footer-col">
+        <h6 class="footer-title">Customer Service</h6>
+        <a href="#">FAQ</a>
+        <a href="#">Returns</a>
+        <a href="#">Shipping</a>
+        <a href="#">Privacy Policy</a>
+      </div>
+
+      <!-- Contact -->
+      <div class="footer-col">
+        <h6 class="footer-title">Contact</h6>
+        <p><i class="fas fa-home me-2"></i> Cairo, Egypt</p>
+        <p><i class="fas fa-envelope me-2"></i> support myshop.com</p>
+        <p><i class="fas fa-phone me-2"></i> +20 100 123 4567</p>
+
+        <div class="social-icons">
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-linkedin"></i></a>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="footer-bottom text-center">
+    © 2025 TourSite. All rights reserved.
+  </div>
+</footer>
+
+  
