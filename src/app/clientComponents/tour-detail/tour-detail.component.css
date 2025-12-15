@@ -1,0 +1,941 @@
+/* ============================
+   GENERAL PAGE STYLE - THEME CHANGE
+============================ */
+body {
+  background: #f0f4f8;
+}
+
+/* Main content container */
+.main-content {
+  margin-top: 30px;
+}
+
+/* Section Title - New Color Scheme */
+.section-title {
+  font-size: 26px;
+  font-weight: 800;
+  margin-bottom: 20px;
+  color: #1a365d;
+  position: relative;
+  display: inline-block;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #4f46e5, #06b6d4);
+  border-radius: 2px;
+}
+
+/* ============================
+   HEADER IMAGE SECTION - NEW THEME
+============================ */
+.tour-header .header-img {
+  position: relative;
+  height: 400px;
+  overflow: hidden;
+  border-radius: 0 0 30px 30px;
+}
+
+.tour-header img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.9);
+}
+
+.tour-header .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(26, 54, 93, 0.3),
+    rgba(26, 54, 93, 0.7)
+  );
+}
+
+.header-content {
+  position: absolute;
+  bottom: 50px;
+  left: 50px;
+  color: #fff;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.tour-title {
+  font-size: 42px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+/* ============================
+   INFO CARD (LEFT SECTIONS) - NEW DESIGN
+============================ */
+.info-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 30px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.info-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(79, 70, 229, 0.15);
+  border-color: #4f46e5;
+}
+
+/* Info Grid */
+.tour-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 25px;
+  margin-top: 30px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background: #f7fafc;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.info-item:hover {
+  background: #edf2f7;
+  transform: translateX(5px);
+}
+
+.info-item i {
+  font-size: 24px;
+  color: #4f46e5;
+  transition: transform 0.3s ease;
+}
+
+.info-item:hover i {
+  transform: scale(1.2);
+}
+
+.info-label {
+  font-size: 14px;
+  color: #4a5568;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+/* ============================
+   CAROUSEL - NEW DESIGN
+============================ */
+.carousel-container {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.carousel-slide {
+  position: relative;
+  overflow: hidden;
+}
+
+.carousel-image {
+  width: 100%;
+  object-fit: cover;
+  height: 420px;
+  transition: transform 0.6s ease;
+}
+
+.carousel-slide:hover .carousel-image {
+  transform: scale(1.05);
+}
+
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  padding: 15px 18px;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  border: none;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #4f46e5;
+}
+
+.carousel-btn:hover {
+  background: #4f46e5;
+  color: white;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.prev-btn {
+  left: 20px;
+}
+
+.next-btn {
+  right: 20px;
+}
+
+.carousel-indicators {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  background: #cbd5e0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.indicator.active {
+  background: #4f46e5;
+  transform: scale(1.3);
+}
+
+/* ============================
+   BOOKING CARD (RIGHT SIDEBAR) - NEW THEME
+============================ */
+.booking-card {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 25px rgba(79, 70, 229, 0.1);
+  position: sticky;
+  top: 120px;
+}
+
+/* Price Box */
+.booking-header {
+  text-align: center;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.booking-price {
+  font-size: 42px;
+  font-weight: 900;
+  color: #4f46e5;
+  position: relative;
+  display: inline-block;
+}
+
+.booking-price::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, #4f46e5, #06b6d4);
+  border-radius: 3px;
+}
+
+.price-note {
+  font-size: 16px;
+  color: #718096;
+  margin-top: 10px;
+}
+
+/* Form */
+.booking-form {
+  background: #f7fafc;
+  padding: 25px;
+  border-radius: 15px;
+  margin-top: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 2px solid #e2e8f0;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+/* Price Summary */
+.price-summary {
+  background: linear-gradient(135deg, #f7fafc, #edf2f7);
+  padding: 20px;
+  border-radius: 15px;
+  margin-top: 20px;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 15px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.summary-item.total {
+  font-weight: 900;
+  font-size: 18px;
+  color: #4f46e5;
+  border-bottom: none;
+  padding-top: 10px;
+}
+
+/* Book Button */
+.btn-book {
+  width: 100%;
+  padding: 16px;
+  margin-top: 20px;
+  background: linear-gradient(135deg, #4f46e5, #06b6d4);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 700;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-book::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.6s ease;
+}
+
+.btn-book:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(79, 70, 229, 0.3);
+}
+
+.btn-book:hover::before {
+  left: 100%;
+}
+
+/* Security Notice */
+.security-notice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #718096;
+  font-size: 14px;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.security-notice i {
+  color: #4f46e5;
+}
+
+/* Sidebar Info */
+.tour-info-sidebar {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 2px solid #e2e8f0;
+}
+
+.info-item-sidebar {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+  padding: 12px;
+  background: #f7fafc;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.info-item-sidebar:hover {
+  background: #edf2f7;
+  transform: translateX(5px);
+}
+
+.info-item-sidebar i {
+  font-size: 22px;
+  color: #4f46e5;
+}
+
+.info-item-sidebar .info-value {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* ============================
+   HERO SECTION - NEW ANIMATIONS
+============================ */
+.category-hero-section-new {
+  width: 100%;
+  margin-top: 100px;
+  text-align: center;
+  margin-top: 120px;
+}
+
+.hero-img-wrapper-new {
+  width: 100%;
+  aspect-ratio: 1920 / 500;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 40px;
+  background: linear-gradient(135deg, #1a365d, #4f46e5);
+}
+
+.hero-img-new {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.7s ease;
+  filter: brightness(0.9) saturate(1.2);
+}
+
+.hero-img-wrapper-new:hover .hero-img-new {
+  transform: scale(1.08);
+}
+
+/* New Title Animation */
+.hero-info-new {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  perspective: 1000px;
+}
+
+.hero-info-new span {
+  display: inline-block;
+  font-size: 3.8rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  background: linear-gradient(270deg, 
+    #4f46e5, #06b6d4, #10b981, #4f46e5,
+    #06b6d4, #10b981, #4f46e5);
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+  animation: 
+    floatAnimation 3.5s ease-in-out infinite,
+    gradientFlow 6s linear infinite,
+    textGlow 4s ease-in-out infinite;
+  filter: drop-shadow(0 5px 15px rgba(79, 70, 229, 0.3));
+}
+
+@keyframes floatAnimation {
+  0%, 100% { 
+    transform: 
+      translate3d(0, 0, 0) 
+      rotateX(0deg) 
+      rotateY(0deg); 
+  }
+  33% { 
+    transform: 
+      translate3d(5px, -10px, 15px) 
+      rotateX(3deg) 
+      rotateY(-2deg); 
+  }
+  66% { 
+    transform: 
+      translate3d(-5px, 5px, -10px) 
+      rotateX(-2deg) 
+      rotateY(3deg); 
+  }
+}
+
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes textGlow {
+  0%, 100% { 
+    filter: drop-shadow(0 5px 15px rgba(79, 70, 229, 0.3)) 
+            brightness(1); 
+  }
+  50% { 
+    filter: drop-shadow(0 10px 25px rgba(79, 70, 229, 0.6)) 
+            brightness(1.2); 
+  }
+}
+
+/* Staggered animation for letters */
+.hero-info-new span:nth-child(1) { animation-delay: 0s; }
+.hero-info-new span:nth-child(2) { animation-delay: 0.1s; }
+.hero-info-new span:nth-child(3) { animation-delay: 0.2s; }
+.hero-info-new span:nth-child(4) { animation-delay: 0.3s; }
+.hero-info-new span:nth-child(5) { animation-delay: 0.4s; }
+.hero-info-new span:nth-child(6) { animation-delay: 0.5s; }
+.hero-info-new span:nth-child(7) { animation-delay: 0.6s; }
+
+/* ============================
+   TOUR DESCRIPTION SECTION
+============================ */
+.tour-description-section {
+  padding: 35px 25px;
+  background: linear-gradient(135deg, #ffffff, #f7fafc);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  max-width: 900px;
+  margin: 0 auto 50px auto;
+  border: 1px solid #e2e8f0;
+  transition: transform 0.4s ease;
+}
+
+.tour-description-section:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(79, 70, 229, 0.15);
+}
+
+.description-text {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #2d3748;
+  font-weight: 500;
+}
+
+/* ============================
+   TOUR HIGHLIGHTS SECTION
+============================ */
+.highlight-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  background: linear-gradient(135deg, #f7fafc, #edf2f7);
+  padding: 15px 20px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  margin-bottom: 10px;
+  border-left: 4px solid #4f46e5;
+}
+
+.highlight-item:hover {
+  background: linear-gradient(135deg, #edf2f7, #e2e8f0);
+  transform: translateX(10px);
+}
+
+.highlight-item i {
+  font-size: 20px;
+  color: #4f46e5;
+  margin-top: 3px;
+}
+
+.highlight-item strong {
+  display: block;
+  font-size: 16px;
+  color: #1a365d;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.highlight-item p {
+  font-size: 14px;
+  color: #4a5568;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ============================
+   WHAT'S INCLUDED SECTION
+============================ */
+.included-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  background: #f7fafc;
+  padding: 16px 20px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  margin-bottom: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.included-item:hover {
+  background: #edf2f7;
+  border-color: #4f46e5;
+  transform: translateY(-3px);
+}
+
+.included-item i {
+  font-size: 20px;
+  color: #10b981;
+  margin-top: 3px;
+}
+
+.included-item strong {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a365d;
+  margin-bottom: 5px;
+}
+
+.included-item p {
+  font-size: 14px;
+  color: #4a5568;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ============================
+   WHAT'S NOT INCLUDED SECTION
+============================ */
+.not-included-section {
+  padding: 35px 25px;
+  background: linear-gradient(135deg, #fff5f5, #fed7d7);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  max-width: 900px;
+  margin: 0 auto 50px auto;
+  border: 1px solid #fed7d7;
+}
+
+.not-included-point {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  background: white;
+  padding: 16px 20px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  margin-bottom: 10px;
+  border-left: 4px solid #f56565;
+}
+
+.not-included-point:hover {
+  background: #fff5f5;
+  transform: translateX(5px);
+}
+
+.not-included-point i {
+  font-size: 20px;
+  color: #f56565;
+  margin-top: 3px;
+}
+
+.not-included-point strong {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 5px;
+}
+
+.not-included-point p {
+  font-size: 14px;
+  color: #4a5568;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ============================
+   DYNAMIC BOOK NOW BUTTON
+============================ */
+.booking-form .btn-book {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 55px;
+  padding: 0 30px;
+  font-size: 18px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: white;
+  background: linear-gradient(135deg, #4f46e5, #06b6d4);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+  transition: all 0.4s ease;
+}
+
+/* Glowing border animation */
+.booking-form .btn-book::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #4f46e5, #06b6d4, #10b981, #4f46e5);
+  border-radius: 14px;
+  z-index: -1;
+  filter: blur(10px);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.booking-form .btn-book:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(79, 70, 229, 0.6);
+}
+
+.booking-form .btn-book:hover::after {
+  opacity: 1;
+}
+
+/* Button text animation */
+.booking-form .btn-book span {
+  position: relative;
+  z-index: 1;
+  transition: transform 0.3s ease;
+}
+
+.booking-form .btn-book:hover span {
+  transform: scale(1.05);
+}
+
+/* Icon animation */
+.booking-form .btn-book i {
+  margin-left: 10px;
+  font-size: 18px;
+  transform: translateX(-10px);
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+
+.booking-form .btn-book:hover i {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+/* ============================
+   INFO SECTION
+============================ */
+.gold-info-section {
+  background: linear-gradient(135deg, #e6fffa, #b2f5ea);
+  padding: 35px 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  max-width: 900px;
+  margin: 0 auto 50px auto;
+  border: 1px solid #81e6d9;
+}
+
+.info-list li {
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  margin-bottom: 15px;
+  line-height: 1.6;
+  color: #2d3748;
+  padding: 12px 15px;
+  background: white;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.info-list li:hover {
+  background: #f0fff4;
+  transform: translateX(5px);
+}
+
+.info-list li i {
+  font-size: 20px;
+  color: #0d9488;
+  transition: transform 0.3s ease;
+}
+
+.info-list li:hover i {
+  transform: rotate(15deg) scale(1.2);
+}
+
+/* ============================
+   VIDEO SECTION
+============================ */
+.gold-video-section {
+  background: linear-gradient(135deg, #1a365d, #2d3748);
+  padding: 50px 30px;
+  border-radius: 25px;
+  border: 2px solid rgba(79, 70, 229, 0.3);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.gold-video-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(79, 70, 229, 0.1) 0%, transparent 70%);
+  animation: rotateBg 20s linear infinite;
+}
+
+@keyframes rotateBg {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.gold-video-section .section-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #e6fffa;
+  margin-bottom: 40px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.video-wrapper {
+  max-width: 700px;
+  margin: 0 auto;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  position: relative;
+  z-index: 1;
+  animation: floatVideo 6s ease-in-out infinite;
+}
+
+@keyframes floatVideo {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-10px) scale(1.02); }
+}
+
+.video-wrapper iframe {
+  width: 100%;
+  height: 400px;
+  border: none;
+  display: block;
+  border-radius: 20px;
+  transition: transform 0.5s ease;
+}
+
+.video-wrapper:hover iframe {
+  transform: scale(1.02);
+}
+
+/* ============================
+   FORM LAYOUT
+============================ */
+.two-cols {
+  display: flex;
+  gap: 20px;
+}
+
+.two-cols .col-half {
+  flex: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .two-cols {
+    flex-direction: column;
+  }
+  
+  .section-title {
+    font-size: 22px;
+  }
+  
+  .hero-info-new span {
+    font-size: 2.2rem;
+  }
+  
+  .hero-img-wrapper-new {
+    height: 250px;
+  }
+  
+  .tour-title {
+    font-size: 32px;
+  }
+  
+  .booking-price {
+    font-size: 36px;
+  }
+  
+  .video-wrapper iframe {
+    height: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-info-new span {
+    font-size: 1.8rem;
+  }
+  
+  .tour-info-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .carousel-image {
+    height: 280px;
+  }
+  
+  .booking-card {
+    padding: 20px;
+  }
+}
+
+.word {
+  margin-right: 15px; /* غير الرقم حسب المسافة اللي تحبها */
+  display: inline-block;
+}
+.btn-book {
+  position: relative;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.btn-book .icons {
+  display: none; /* نخفي الأيقونات في البداية */
+}
+
+.btn-book:hover .text {
+  display: none; /* نخفي الكلمة عند hover */
+}
+
+.btn-book:hover .icons {
+  display: inline-flex; /* نظهر الأيقونات عند hover */
+  gap: 5px;
+}

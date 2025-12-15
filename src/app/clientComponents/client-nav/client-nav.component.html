@@ -1,0 +1,109 @@
+<nav class="main-nav" 
+[class.scrolled]="isScrolled" 
+[class.light]="!isScrolled"
+[class.hide-on-mobile]="isOffcanvasOpen">
+    <div class="container nav-container">
+      <!-- الشعار -->
+      <a class="logo" routerLink="/">
+        <img src="assets/images/toppicktravel-removebg-preview.png" alt="Logo" />
+      </a>
+  
+      <!-- القائمة في الوسط -->
+      <ul class="nav-links">
+        <li><a routerLink="/"routerLinkActive="active-link">{{ 'NAV.HOME' | t }}</a></li>
+        <!-- <li><a routerLink="tour"routerLinkActive="active-link">Tours</a></li> -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle">  {{ 'NAV.HURGHADA_TOURS' | t }}</a>
+        
+          <ul class="dropdown-menu">
+            <li><a [routerLink]="['/categrytourDetail', 1]">{{ 'NAV.CAIRO_TOURS' | t }}</a></li>
+            <li><a [routerLink]="['/categrytourDetail', 2]"> {{ 'NAV.LUXOR_TOURS' | t }}</a></li>
+            <li><a [routerLink]="['/categrytourDetail', 3]">{{ 'NAV.SAFARI_TOURS' | t }}</a></li>
+            <li><a [routerLink]="['/categrytourDetail', 28]">{{ 'NAV.SEA_TOURS' | t }}</a></li>
+            <li><a [routerLink]="['/categrytourDetail', 34]"> {{ 'NAV.THINGS_TO_DO_HURGHADA' | t }}</a></li>
+          </ul>
+        </li>
+
+   
+        <li><a routerLink="transfer"routerLinkActive="active-link"> {{ 'NAV.TRANSFERS' | t }}</a></li>
+        <li><a routerLink="/"routerLinkActive="active-link">{{ 'NAV.BLOGS' | t }}</a></li>
+        <li><a routerLink="/"routerLinkActive="active-link">{{ 'NAV.REVIEWS' | t }}</a></li>
+        <li><a routerLink="/"routerLinkActive="active-link">{{ 'NAV.ABOUT' | t }}</a></li>
+      </ul>
+      <div class="language-switcher">
+        <button class="lang-btn">
+          <img src="assets/images/hlind.jpg" alt="English"(click)="changeLang('ar')">
+        </button>
+        <button class="lang-btn">
+          <img src="assets/images/german.jpg" alt="Arabic"(click)="changeLang('ar')">
+        </button>
+        <button class="lang-btn">
+          <img src="assets/images/brith.png" alt="French"(click)="changeLang('en')">
+        </button>
+      </div>
+      
+      <!-- Social Icons على اليمين s-->
+      <div class="social-icons">
+        <a href="#" class="social-icon" data-name="facebook">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="#" class="social-icon" data-name="twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+        <a href="#" class="social-icon" data-name="instagram">
+          <i class="fab fa-instagram"></i>
+        </a>
+      </div>
+      <button class="hamburger-btn" (click)="toggleOffcanvas()" [class.active]="isOffcanvasOpen">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    
+    </div>
+  </nav>
+
+
+  <!-- Hamburger Button for Mobile -->
+
+<!-- Offcanvas Menu -->
+<div class="offcanvas-overlay" (click)="closeOffcanvas()" [class.active]="isOffcanvasOpen"></div>
+
+<div class="offcanvas-menu" [class.active]="isOffcanvasOpen">
+  <div class="offcanvas-header">
+    <a class="logo" routerLink="/" (click)="closeOffcanvas()">
+      <img src="assets/images/redseaRemove1.png" alt="Logo" />
+    </a>
+    <button class="close-btn" (click)="closeOffcanvas()">&times;</button>
+  </div>
+
+  <ul class="offcanvas-links">
+    <li><a routerLink="/" routerLinkActive="active-link" (click)="closeOffcanvas()">{{ 'NAV.HOME' | t }}</a></li>
+    
+    <!-- Hurghada Tours Dropdown -->
+    <li class="offcanvas-dropdown">
+      <a class="dropdown-toggle" (click)="toggleDropdown($event, 'hurghada')">
+        {{ 'NAV.HURGHADA_TOURS' | t }}
+        <i class="fas fa-chevron-down"></i>
+      </a>
+      <ul class="dropdown-submenu" [class.open]="activeDropdown === 'hurghada'">
+        <li><a [routerLink]="['/categrytourDetail', 1]" (click)="closeOffcanvas()">{{ 'NAV.CAIRO_TOURS' | t }}</a></li>
+        <li><a [routerLink]="['/categrytourDetail', 2]" (click)="closeOffcanvas()">{{ 'NAV.LUXOR_TOURS' | t }}</a></li>
+        <li><a [routerLink]="['/categrytourDetail', 3]" (click)="closeOffcanvas()">{{ 'NAV.SAFARI_TOURS' | t }}</a></li>
+        <li><a [routerLink]="['/categrytourDetail', 28]" (click)="closeOffcanvas()">{{ 'NAV.SEA_TOURS' | t }}</a></li>
+        <li><a [routerLink]="['/categrytourDetail', 34]" (click)="closeOffcanvas()">{{ 'NAV.THINGS_TO_DO_HURGHADA' | t }}</a></li>
+      </ul>
+    </li>
+    <li><a routerLink="transfer" routerLinkActive="active-link" (click)="closeOffcanvas()"> {{ 'NAV.TRANSFERS' | t }}</a></li>
+    <li><a routerLink="/" (click)="closeOffcanvas()">{{ 'NAV.BLOGS' | t }}</a></li>
+    <li><a routerLink="/" (click)="closeOffcanvas()">{{ 'NAV.REVIEWS' | t }}</a></li>
+    <li><a routerLink="/" (click)="closeOffcanvas()">{{ 'NAV.ABOUT' | t }}</a></li>
+  </ul>
+
+  <!-- Social Icons in Offcanvas -->
+  <div class="offcanvas-social">
+    <a href="#"><i class="fab fa-facebook-f"></i></a>
+    <a href="#"><i class="fab fa-twitter"></i></a>
+    <a href="#"><i class="fab fa-instagram"></i></a>
+  </div>
+</div>
