@@ -1,14 +1,14 @@
-import { CommonModule, NgClass } from '@angular/common';
-import { Component, ElementRef, inject, signal, ViewChild, WritableSignal } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { TransferService } from '../../core/services/transfer.service';
-import { DestnatoinService } from '../../core/services/destnatoin.service';
-import { IDestnation } from '../../core/interfaces/idestnation';
-import { Subscription } from 'rxjs';
-import { HttpErrorResponse, HttpFeatureKind } from '@angular/common/http';
-import { environment } from '../../core/environments/environments';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
+
+interface FormErrorSummary {
+  label: string;
+  lang?: string;
+}
 
 @Component({
   selector: 'app-update-transfer',
@@ -17,231 +17,303 @@ import { environment } from '../../core/environments/environments';
   templateUrl: './update-transfer.component.html',
   styleUrl: './update-transfer.component.css'
 })
-export class UpdateTransferComponent {
-  private readonly toasterService = inject(ToastrService);
-  private readonly destnaionService=inject(DestnatoinService);
-  private readonly _router = inject(Router);
-  allDestionList:WritableSignal<IDestnation[]>=signal([]);
-  destnationSUbs:WritableSignal<Subscription|null>=signal(null);
-  
+export class UpdateTransferComponent  {
+  private readonly toaster = inject(ToastrService);
+  private readonly router = inject(Router);
 
+  languages = ['en', 'de', 'nl'];
   transferForm: FormGroup;
-  imagePreview: string | ArrayBuffer | null = null; 
-  oldImageUrl: string | null = null;
-  newImageFile: File | null = null;
-  currentImage = signal<string>('');
+  formErrors: FormErrorSummary[] = [];
+  transferId!: number;
 
+  imagePreview: string | ArrayBuffer | null = null;
+  selectedFile: File | null = null;
+
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   constructor(
     private fb: FormBuilder,
     private transferService: TransferService,
     private route: ActivatedRoute
   ) {
-    this.transferForm = this.fb.group({
-      title: ['', Validators.required],
-      description: ['', Validators.required],
-      metaDescription: ['', Validators.required],
-      metaKeyWords: ['', Validators.required],
+    this.transferForm = this.buildForm();
+  }
+
+  ngOnInit() {
+    this.transferId = Number(this.route.snapshot.paramMap.get('id'));
+    this.loadTransfer();
+  }
+
+  // =========================
+  // Build Form
+  // =========================
+  private buildForm(): FormGroup {
+    return this.fb.group({
       referenceName: ['', Validators.required],
       isActive: [true],
       fkDestinationId: [null, Validators.required],
 
-      pricesList: this.fb.array([]),
-      includesList: this.fb.array([]),
-      notIncludedList: this.fb.array([]),
-      highlightList: this.fb.array([])
+      translations: this.fb.group({
+        en: this.createTranslationGroup(),
+        de: this.createTranslationGroup(),
+        nl: this.createTranslationGroup()
+      }),
+
+      prices: this.fb.group({
+        en: this.fb.array([]),
+        de: this.fb.array([]),
+        nl: this.fb.array([])
+      }),
+
+      includes: this.fb.group({
+        en: this.fb.array([]),
+        de: this.fb.array([]),
+        nl: this.fb.array([])
+      }),
+
+      notIncludes: this.fb.group({
+        en: this.fb.array([]),
+        de: this.fb.array([]),
+        nl: this.fb.array([])
+      }),
+
+      highlights: this.fb.group({
+        en: this.fb.array([]),
+        de: this.fb.array([]),
+        nl: this.fb.array([])
+      })
     });
   }
 
-  ngOnInit(): void {
+  private createTranslationGroup(): FormGroup {
+    return this.fb.group({
+      name: ['', Validators.required],
+      description: ['', Validators.required]
+    });
+  }
 
-    const id = Number(this.route.snapshot.paramMap.get("id"));
-    if (id) {
-      this.loadTransfer(id);
-    }
-  this.destnationSUbs.set(this.destnaionService.getAllAdminDestnation().subscribe({
-         next:(res)=>{
-           this.allDestionList.set(res.data);
-           console.log(this.allDestionList());
-         },
-         error:(err:HttpErrorResponse)=>{
-           console.log(err.message);
-         }
-       }));
-     }
-   
-     ngOnDestroy(): void {
-       if(this.destnationSUbs()){
-         this.destnationSUbs()?.unsubscribe();
-       }
-     }
+  // =========================
+  // FormArray Getters
+  // =========================
+  getTranslationGroup(lang: string) {
+    return this.transferForm.get(['translations', lang]) as FormGroup;
+  }
 
-  /* *********************************************
-     Load Transfer + Patch + Build FormArrays
-  ********************************************** */
-  loadTransfer(id: number) {
-    this.transferService.getDetaildedTransfers(id).subscribe(t => {
-      this.oldImageUrl = t.imageCover;
-      this.imagePreview = null;
-     // this.currentImage.set(environment.BaseUrl + this.oldImageUrl);
-      
-      this.transferForm.patchValue({
-        title: t.title,
-        description: t.description,
-        metaDescription: t.metaDescription,
-        metaKeyWords: t.metaKeyWords,
-        referenceName: t.referenceName,
-        isActive: t.isActive,
-        fkDestinationId: t.fkDestinationId
+  getPrices(lang: string): FormArray {
+    return this.transferForm.get(['prices', lang]) as FormArray;
+  }
+
+  getIncludes(lang: string): FormArray {
+    return this.transferForm.get(['includes', lang]) as FormArray;
+  }
+
+  getNotIncludes(lang: string): FormArray {
+    return this.transferForm.get(['notIncludes', lang]) as FormArray;
+  }
+
+  getHighlights(lang: string): FormArray {
+    return this.transferForm.get(['highlights', lang]) as FormArray;
+  }
+
+  // =========================
+  // Load transfer & patch
+  // =========================
+  loadTransfer() {
+    this.transferService.getAllDetaildedTransfers(this.transferId).subscribe(res => {
+      this.patchBasicData(res);
+      this.patchTranslations(res.translations);
+      this.patchPrices(res.pricesList);
+      this.patchText(res.includeds, 'includes');
+      this.patchText(res.notIncludeds, 'notIncludes');
+      this.patchText(res.highlights, 'highlights');
+
+      this.imagePreview = `https://localhost:7065/${res.imageCover}`;
+    });
+  }
+
+  private patchBasicData(data: any) {
+    this.transferForm.patchValue({
+      referenceName: data.referneceName,
+      isActive: data.isActive,
+      fkDestinationId: data.fK_DestinationID
+    });
+  }
+
+  private patchTranslations(translations: any[]) {
+    this.languages.forEach(lang => {
+      const tr = translations.find(t => t.language === lang);
+      if (tr) {
+        this.getTranslationGroup(lang).patchValue({
+          name: tr.name,
+          description: tr.description
+        });
+      }
+    });
+  }
+
+  private patchPrices(prices: any[]) {
+    this.languages.forEach(lang => {
+      const arr = this.getPrices(lang);
+      arr.clear();
+      prices.filter(p => p.language === lang).forEach(p => {
+        arr.push(this.fb.group({
+          id: [p.id],
+          title: [p.title, Validators.required],
+          privtePrice: [p.privtePrice, Validators.required],
+          sharedPrice: [p.sharedPrice, Validators.required],
+          Language: [lang]
+        }));
       });
-
-      this.setPrices(t.pricesList || []);
-      this.setIncludes(t.includesList || []);
-      this.setNotIncluded(t.notIncludedList || []);
-      this.setHighlight(t.highlightList || []);
     });
   }
 
-  /* *********************************************
-        Build FormArrays From API
-  ********************************************** */
-
-  get pricesList() { return this.transferForm.get('pricesList') as FormArray; }
-  setPrices(items: any[]) {
-    this.pricesList.clear();
-    items.forEach(p => {
-      this.pricesList.push(this.fb.group({
-        Title: [p.title, Validators.required],
-        PrivtePrice: [p.privtePrice, Validators.required],
-        SharedPrice: [p.sharedPrice, Validators.required]
-      }));
+  private patchText(list: any[], key: 'includes' | 'notIncludes' | 'highlights') {
+    this.languages.forEach(lang => {
+      const arr = this.transferForm.get([key, lang]) as FormArray;
+      arr.clear();
+      list.filter(x => x.language === lang).forEach(x => {
+        arr.push(this.fb.group({
+          id: [x.id],
+          text: [x.text, Validators.required],
+          Language: [lang]
+        }));
+      });
     });
   }
 
-  get includesList() { return this.transferForm.get('includesList') as FormArray; }
-  setIncludes(items: any[]) {
-    this.includesList.clear();
-    items.forEach(i => {
-      this.includesList.push(this.fb.group({
-        Text: [i.text, Validators.required]
-      }));
-    });
-  }
-
-  get notIncludedList() { return this.transferForm.get('notIncludedList') as FormArray; }
-  setNotIncluded(items: any[]) {
-    this.notIncludedList.clear();
-    items.forEach(i => {
-      this.notIncludedList.push(this.fb.group({
-        Text: [i.text, Validators.required]
-      }));
-    });
-  }
-
-  get highlightList() { return this.transferForm.get('highlightList') as FormArray; }
-  setHighlight(items: any[]) {
-    this.highlightList.clear();
-    items.forEach(h => {
-      this.highlightList.push(this.fb.group({
-        Text: [h.text, Validators.required]
-      }));
-    });
-  }
-
-  /* *********************************************
-         Add / Remove Buttons (Same as Create)
-  ********************************************** */
-
-  addPrice() {
-    this.pricesList.push(this.fb.group({
-      Title: ['', Validators.required],
-      PrivtePrice: [0, Validators.required],
-      SharedPrice: [0, Validators.required]
+  // =========================
+  // Add / Remove
+  // =========================
+  addPrice(lang: string) {
+    this.getPrices(lang).push(this.fb.group({
+      title: ['', Validators.required],
+      privtePrice: [0, Validators.required],
+      sharedPrice: [0, Validators.required],
+      Language: [lang]
     }));
   }
 
-  removePrice(i: number) {
-    this.pricesList.removeAt(i);
+  removePrice(lang: string, index: number) {
+    this.getPrices(lang).removeAt(index);
   }
 
-  addInclude() { this.includesList.push(this.fb.group({ Text: ['', Validators.required] })); }
-  removeInclude(i: number) { this.includesList.removeAt(i); }
+  addInclude(lang: string) {
+    this.getIncludes(lang).push(this.fb.group({
+      text: ['', Validators.required],
+      Language: [lang]
+    }));
+  }
 
-  addNotIncluded() { this.notIncludedList.push(this.fb.group({ Text: ['', Validators.required] })); }
-  removeNotIncluded(i: number) { this.notIncludedList.removeAt(i); }
+  removeInclude(lang: string, index: number) {
+    this.getIncludes(lang).removeAt(index);
+  }
 
-  addHighlight() { this.highlightList.push(this.fb.group({ Text: ['', Validators.required] })); }
-  removeHighlight(i: number) { this.highlightList.removeAt(i); }
+  addNotInclude(lang: string) {
+    this.getNotIncludes(lang).push(this.fb.group({
+      text: ['', Validators.required],
+      Language: [lang]
+    }));
+  }
 
-  /* *********************************************
-                  Image Handling
-  ********************************************** */
+  removeNotInclude(lang: string, index: number) {
+    this.getNotIncludes(lang).removeAt(index);
+  }
 
-  @ViewChild('fileInput') fileInput!: ElementRef;
+  addHighlight(lang: string) {
+    this.getHighlights(lang).push(this.fb.group({
+      text: ['', Validators.required],
+      Language: [lang]
+    }));
+  }
 
+  removeHighlight(lang: string, index: number) {
+    this.getHighlights(lang).removeAt(index);
+  }
+
+  // =========================
+  // Image
+  // =========================
   onFileSelected(event: any) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    this.newImageFile = file;
-
+    if (!event.target.files?.length) return;
+    this.selectedFile = event.target.files[0];
     const reader = new FileReader();
     reader.onload = () => this.imagePreview = reader.result;
-    reader.readAsDataURL(file);
+    if (this.selectedFile){
+    reader.readAsDataURL(this.selectedFile);
+  }
   }
 
   removeImage() {
-    this.newImageFile = null;
+    this.selectedFile = null;
     this.imagePreview = null;
     this.fileInput.nativeElement.value = '';
   }
-  removeOldImage() {
-    this.currentImage.set('');
-    this.transferForm.patchValue({ image: null });
-  }
-  
-  /* *********************************************
-                     Submit 
-  ********************************************** */
 
+  // =========================
+  // Submit Update
+  // =========================
   onSubmit() {
     if (this.transferForm.invalid) {
-      this.toasterService.error('All form fields must be filled out before submitting.', 'Form Validation');
-      return
-    };
-
-    const id = Number(this.route.snapshot.paramMap.get("id"));
-    const formData = new FormData();
-
-    const v = this.transferForm.value;
-
-    formData.append('Title', v.title);
-    formData.append('Description', v.description);
-    formData.append('MetaDescription', v.metaDescription);
-    formData.append('MetaKeyWords', v.metaKeyWords);
-    formData.append('ReferenceName', v.referenceName);
-    formData.append('IsActive', v.isActive);
-    formData.append('FK_DestinationID', v.fkDestinationId);
-    console.log("iiiid is ",v.fkDestinationId);
-
-    formData.append('PriecesListJson', JSON.stringify(v.pricesList));
-    formData.append('IncludesListJson', JSON.stringify(v.includesList));
-    formData.append('NotIncludedListJson', JSON.stringify(v.notIncludedList));
-    formData.append('HighlightListJson', JSON.stringify(v.highlightList));
-
-    if (this.newImageFile) {
-      formData.append('ImageFile', this.newImageFile);
+      this.toaster.error('Please complete required fields', 'Validation Error');
+      return;
     }
 
-    this.transferService.updateTransfer(id, formData).subscribe({
+    const formData = new FormData();
+    formData.append('ReferneceName', this.transferForm.value.referenceName);
+    formData.append('IsActive', this.transferForm.value.isActive);
+    formData.append('FK_DestinationID', this.transferForm.value.fkDestinationId);
+
+    formData.append('TranslationsJson', JSON.stringify(this.buildTranslations()));
+    formData.append('PriecesListJson', JSON.stringify(this.collectPrices()));
+    formData.append('IncludesJson', JSON.stringify(this.collectText('includes')));
+    formData.append('NonIncludesJson', JSON.stringify(this.collectText('notIncludes')));
+    formData.append('hightlightJson', JSON.stringify(this.collectText('highlights')));
+
+    if (this.selectedFile) formData.append('ImageFile', this.selectedFile);
+
+    this.transferService.updateTransfer(this.transferId, formData).subscribe({
       next: () => {
-        this.toasterService.success('Transfer Updated Successfully', 'Update Success');
-        this._router.navigate(['/admin/transfers']);
+        this.toaster.success('Transfer updated successfully', 'Success');
+        this.router.navigate(['/admin/transfers']);
       },
-      error: () => {
-        this.toasterService.error('Error updating transfer.', 'Update Error');
-      }
+      error: () => this.toaster.error('Error updating transfer', 'Error')
     });
+  }
+
+  // =========================
+  // Collect Data
+  // =========================
+  private buildTranslations() {
+    return this.languages.map(lang => {
+      const tr = this.getTranslationGroup(lang).value;
+      return { Language: lang, Name: tr.name, Description: tr.description };
+    });
+  }
+
+  private collectPrices(): any[] {
+    const result: any[] = [];
+    this.languages.forEach(lang => {
+      this.getPrices(lang).value.forEach((p: any) => {
+        result.push({
+          Id: p.id || 0,
+          Title: p.title,
+          PrivtePrice: p.privtePrice,
+          SharedPrice: p.sharedPrice,
+          Language: lang
+        });
+      });
+    });
+    return result;
+  }
+
+  private collectText(key: 'includes' | 'notIncludes' | 'highlights'): any[] {
+    const result: any[] = [];
+    this.languages.forEach(lang => {
+      this.transferForm.get([key, lang])?.value.forEach((item: any) => {
+        result.push({ Id: item.id || 0, Text: item.text, Language: lang });
+      });
+    });
+    return result;
   }
 
 }

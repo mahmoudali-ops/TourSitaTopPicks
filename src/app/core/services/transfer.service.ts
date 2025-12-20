@@ -20,6 +20,10 @@ export class TransferService {
       return this.httpcleint.get(`${environment.BaseUrl}/api/Transfer/${id}`);
     }
 
+    getAllDetaildedTransfers(id:number|null):Observable<any>{
+      return this.httpcleint.get(`${environment.BaseUrl}/api/Transfer/get-transfer-for-update/${id}`);
+    }
+
     createTransfer(data:FormData):Observable<any>{
       return this.httpcleint.post(`${environment.BaseUrl}/api/Transfer/create`,data);
     }

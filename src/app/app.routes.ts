@@ -20,7 +20,6 @@ import { ToursAdComponent } from './adminCompoents/tours-ad/tours-ad.component';
 import { EmailAdComponent } from './adminCompoents/email-ad/email-ad.component';
 import { CategorytourAdComponent } from './adminCompoents/categorytour-ad/categorytour-ad.component';
 import { DestnationAdComponent } from './adminCompoents/destnation-ad/destnation-ad.component';
-import { HotelAdComponent } from './adminCompoents/hotel-ad/hotel-ad.component';
 import { TrasnfersAdComponent } from './adminCompoents/trasnfers-ad/trasnfers-ad.component';
 import { CreateTourComponent } from './adminCompoents/create-tour/create-tour.component';
 import { UpdateTourComponent } from './adminCompoents/update-tour/update-tour.component';
@@ -55,31 +54,30 @@ export const routes: Routes = [
           { path: 'register', component: RegisterComponent, title: 'Register' },
       
           // صفحات Dashboard محمية بالـ guard
-          { path: 'tours', component: ToursAdComponent, title: 'Tours Dashboard', canActivate: [authGuardGuard] },
-          { path: 'categorytour', component: CategorytourAdComponent, title: 'Category Tour Dashboard', canActivate: [authGuardGuard] },
-          { path: 'destnaions', component: DestnationAdComponent, title: 'Destnaions Dashboard', canActivate: [authGuardGuard] },
-          { path: 'hotels', component: HotelAdComponent, title: 'Hotels Dashboard', canActivate: [authGuardGuard] },
-          { path: 'transfers', component: TrasnfersAdComponent, title: 'Transfers Dashboard', canActivate: [authGuardGuard] },
+          { path: 'tours', component: ToursAdComponent, title: 'Tours Dashboard', canActivate: [] },// authGuardGuard
+          { path: 'categorytour', component: CategorytourAdComponent, title: 'Category Tour Dashboard', canActivate: [] },
+          { path: 'destnaions', component: DestnationAdComponent, title: 'Destnaions Dashboard', canActivate: [] },
+          { path: 'transfers', component: TrasnfersAdComponent, title: 'Transfers Dashboard', canActivate: [] },
       
-          { path: 'emails', component: EmailAdComponent, title: 'Emails', canActivate: [authGuardGuard] },
-          { path: 'users', component: UsersComponent, title: 'Users', canActivate: [authGuardGuard] },
-          { path: 'dashboard', component: DashboardComponent, title: 'Dashboard', canActivate: [authGuardGuard] },
+          { path: 'emails', component: EmailAdComponent, title: 'Emails', canActivate: [] },
+          { path: 'users', component: UsersComponent, title: 'Users', canActivate: [] },
+          { path: 'dashboard', component: DashboardComponent, title: 'Dashboard', canActivate: [] },
       
           // CRUD Tours محمية بالـ guard
-          { path: 'tourCreate', component: CreateTourComponent, title: 'Admin Create a Tour', canActivate: [authGuardGuard] },
-          { path: 'tourUpdate/:id', component: UpdateTourComponent, title: 'Admin Update a Tour', canActivate: [authGuardGuard] },
+          { path: 'tourCreate', component: CreateTourComponent, title: 'Admin Create a Tour', canActivate: [] },
+          { path: 'tourUpdate/:id', component: UpdateTourComponent, title: 'Admin Update a Tour', canActivate: [] },
       
           // CRUD Destinations محمية بالـ guard
-          { path: 'destnationCreate', component: CreateDestnaionsComponent, title: 'Admin Create a Destnation', canActivate: [authGuardGuard] },
-          { path: 'destnationUpdate/:id', component: UpdateDestnaionsComponent, title: 'Admin Update a Destnation', canActivate: [authGuardGuard] },
+          { path: 'destnationCreate', component: CreateDestnaionsComponent, title: 'Admin Create a Destnation', canActivate: [] },
+          { path: 'destnationUpdate/:id', component: UpdateDestnaionsComponent, title: 'Admin Update a Destnation', canActivate: [] },
       
           // CRUD Category Tours محمية بالـ guard
-          { path: 'catTourCreate', component: CreateCatTourComponent, title: 'Admin Create a Category Tour', canActivate: [authGuardGuard] },
-          { path: 'catTourUpdate/:id', component: UpdateCatTourComponent, title: 'Admin Update a Category Tour', canActivate: [authGuardGuard] },
+          { path: 'catTourCreate', component: CreateCatTourComponent, title: 'Admin Create a Category Tour', canActivate: [] },
+          { path: 'catTourUpdate/:id', component: UpdateCatTourComponent, title: 'Admin Update a Category Tour', canActivate: [] },
       
           // CRUD Transfers محمية بالـ guard
-          { path: 'transferCreate', component: CreateTransferComponent, title: 'Admin Create a Transfer', canActivate: [authGuardGuard] },
-          { path: 'transferUpdate/:id', component: UpdateTransferComponent, title: 'Admin Update a Transfer', canActivate: [authGuardGuard] },
+          { path: 'transferCreate', component: CreateTransferComponent, title: 'Admin Create a Transfer', canActivate: [] },
+          { path: 'transferUpdate/:id', component: UpdateTransferComponent, title: 'Admin Update a Transfer', canActivate: [] },
       
           // redirect افتراضي لأي /admin يذهب للـ dashboard
           { path: '', redirectTo: 'dashboard', pathMatch: 'full' },

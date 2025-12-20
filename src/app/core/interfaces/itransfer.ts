@@ -48,7 +48,6 @@ export interface NotIncluded {
 
 export interface Highlight {
   id: number
-
   language: string
   text: string
 }

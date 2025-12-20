@@ -12,7 +12,7 @@ import { SearchPipe } from '../../core/pipes/search.pipe';
 @Component({
   selector: 'app-categorytour-ad',
   standalone: true,
-  imports: [RouterLink,SearchPipe,FormsModule],
+  imports: [RouterLink,FormsModule],
   templateUrl: './categorytour-ad.component.html',
   styleUrl: './categorytour-ad.component.css'
 })

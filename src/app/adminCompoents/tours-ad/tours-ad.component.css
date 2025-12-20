@@ -23,7 +23,7 @@
   .tour-row.header {
     display: grid;
     grid-template-columns: 60px 1fr 1fr 1fr 180px 120px 120px;
-    background: linear-gradient(135deg, #3d3b5f, #3b82f6, #3d3b5f);
+    background: linear-gradient(135deg,rgb(32, 33, 30),rgb(129, 128, 14),rgb(32, 33, 30));
     color: #fff;
     font-weight: 700;
     border-radius: 10px;
@@ -152,7 +152,7 @@
   
   /* زر إضافة تور حديث */
   .add-tour-btn {
-    background: linear-gradient(135deg, #066fe7, #0eba44);
+    background: linear-gradient(135deg,rgb(50, 55, 46),rgb(129, 128, 14));
     color: #fff;
     padding: 12px 22px;
     border: none;
@@ -173,7 +173,7 @@
   
   /* Hover */
   .add-tour-btn:hover {
-    background: linear-gradient(135deg, #42dd83, #003c9b);
+    background: linear-gradient(135deg,rgb(76, 86, 66),rgb(142, 221, 51));
     box-shadow: 0 5px 14px rgba(0, 86, 210, 0.35);
     transform: translateY(-2px);
   }

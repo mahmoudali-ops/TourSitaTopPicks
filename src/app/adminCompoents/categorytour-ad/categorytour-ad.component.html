@@ -9,14 +9,7 @@
       Add New Category
     </button>
   </div>
-  <div class="search-wrapper">
-    <input 
-      type="text" 
-      placeholder="Search Category.."
-      [(ngModel)]="searchTerm"
-      />
-    <i class="fa-solid fa-magnifying-glass search-icon"></i>
-  </div>
+
   <!-- Category List -->
   <div class="tour-list">
 
@@ -28,7 +21,7 @@
       <div class="tour-col actions">Actions</div>
     </div>
 
-    @for (tour of AllCAtegortTourList()|search:searchTerm; track tour.id) {
+    @for (tour of AllCAtegortTourList(); track tour.id) {
     <div class="tour-row">
 
       <!-- ID -->
@@ -38,7 +31,7 @@
 
       <!-- Title -->
       <div class="tour-col title">
-        <h3>{{ tour.referenceName }}</h3>
+        <h3>{{ tour.referneceName }}</h3>
       </div>
 
       <!-- Status -->

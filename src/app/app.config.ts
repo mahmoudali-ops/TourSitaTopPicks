@@ -7,8 +7,6 @@ import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/
 import { provideToastr } from 'ngx-toastr';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { langInterceptor } from './core/interceptors/lang.interceptor';
-import { provideTranslateLoader, provideTranslateService } from '@ngx-translate/core';
-import { MyTranslateLoader } from './translate-loader';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -22,9 +20,7 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([langInterceptor])
     ),
     provideToastr(),
-    provideAnimations(),
-    provideTranslateLoader(MyTranslateLoader),
-    ...provideTranslateService({
-      fallbackLang: 'en'    })
+    provideAnimations()
+  
   ]
 };

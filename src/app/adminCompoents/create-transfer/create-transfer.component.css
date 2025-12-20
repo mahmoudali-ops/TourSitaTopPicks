@@ -25,7 +25,6 @@
   text-align: center;
 }
 
-
 /* =========================================================
       INPUTS
 ========================================================= */
@@ -53,7 +52,6 @@
   border-color: #198754 !important;
 }
 
-
 /* =========================================================
       LABEL STYLE
 ========================================================= */
@@ -65,7 +63,6 @@
   gap: 6px;
   margin-bottom: 6px;
 }
-
 
 /* =========================================================
       IMAGE UPLOAD
@@ -119,7 +116,6 @@
   background: #b02a37;
 }
 
-
 /* =========================================================
       SMALL BUTTONS (array add/remove)
 ========================================================= */
@@ -128,6 +124,7 @@
   border-radius: 8px;
   font-size: 13px;
   font-weight: 500;
+  cursor: pointer;
 }
 
 /* add buttons */
@@ -142,20 +139,29 @@
   background: #dce0e5;
 }
 
+/* remove buttons */
+.btn-danger.btn-sm {
+  background: #dc3545;
+  color: #fff;
+  border: none;
+}
+
+.btn-danger.btn-sm:hover {
+  background: #b02a37;
+}
 
 /* =========================================================
-      FORM GRID (optional but recommended)
+      FORM GRID
 ========================================================= */
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(2,1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 22px 28px;
 }
 
 .full-width {
   grid-column: span 2;
 }
-
 
 /* =========================================================
       SUBMIT BUTTON
@@ -166,4 +172,54 @@
   font-size: 17px;
   font-weight: 600;
   border-radius: 12px;
+  background-color: #0d6efd;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.submit-btn:hover {
+  background-color: #0b5ed7;
+}
+
+/* =========================================================
+      TABS
+========================================================= */
+.nav-tabs {
+  border-bottom: 1px solid #dee2e6;
+  margin-bottom: 20px;
+}
+
+.nav-tabs .nav-link {
+  border: 1px solid transparent;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  padding: 8px 14px;
+  font-weight: 600;
+  color: #495057;
+  transition: .2s;
+}
+
+.nav-tabs .nav-link.active {
+  color: #0d6efd;
+  background: #fff;
+  border-color: #dee2e6 #dee2e6 #fff;
+}
+
+.nav-tabs .nav-link:hover {
+  background: #f8f9fa;
+}
+
+/* =========================================================
+      FORM ARRAY ITEMS
+========================================================= */
+.array-item {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.array-item input {
+  flex: 1;
 }

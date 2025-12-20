@@ -1,11 +1,12 @@
 import { ITour } from "./itour"
 
 export interface IDestnation {
-    id: number
+  id: number
   imageCover: string
   isActive: boolean
-  title: string
-  description: string
+  names: string
+  descriptions: string
+  referneceName: string
 }
 
 export interface IdetailedDestnaion {
@@ -14,14 +15,7 @@ export interface IdetailedDestnaion {
   isActive: boolean
   names: string
   descriptions: string
+  referneceName: string
   tours: ITour[]
 }
 
-// export interface ITour {
-//   id: number
-//   imageCover: string
-//   duration: number
-//   price: number
-//   titles: string
-//   descriptions: string
-// }

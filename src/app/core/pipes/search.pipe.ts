@@ -8,7 +8,7 @@ export class SearchPipe implements PipeTransform {
 
   transform(objectList:any[],filterText:string): any[] {
 
-    return objectList.filter((item)=>item.referenceName.toLowerCase().includes(filterText.toLowerCase())); 
+    return objectList.filter((item)=>item.referneceName.toLowerCase().includes(filterText.toLowerCase())); 
 
   }
 

@@ -70,7 +70,7 @@
               <div class="hotel-img position-relative overflow-hidden pointer" [routerLink]="['/destnationDetail', hotel.id]">
                 <img 
                   [src]="hotel.imageCover" 
-                  [alt]="hotel.title" 
+                  [alt]="hotel.names" 
                   class="w-100"
                  />
                 
@@ -88,10 +88,10 @@
   
               <!-- Hotel Content -->
               <div class="card-body">
-                <h5 class="hotel-title">{{hotel.title}}</h5>
+                <h5 class="hotel-title">{{hotel.names}}</h5>
                 
                 <p class="hotel-desc">
-                  {{ (hotel.description.length > 90) ? (hotel.description) + '...' : hotel.description }}
+                  {{ (hotel.descriptions.length > 90) ? (hotel.descriptions) + '...' : hotel.descriptions }}
                 </p>
                 
             
