@@ -29,7 +29,7 @@
         <li><a routerLink="transfer"routerLinkActive="active-link"> {{ 'NAV.TRANSFERS' | t }}</a></li>
         <li><a routerLink="/"routerLinkActive="active-link">{{ 'NAV.BLOGS' | t }}</a></li>
         <li><a routerLink="/"routerLinkActive="active-link">{{ 'NAV.REVIEWS' | t }}</a></li>
-        <li><a routerLink="/"routerLinkActive="active-link">{{ 'NAV.ABOUT' | t }}</a></li>
+        <li><a routerLink="/about"routerLinkActive="active-link">{{ 'NAV.ABOUT' | t }}</a></li>
       </ul>
       <div class="language-switcher">
         <button class="lang-btn">
@@ -99,7 +99,7 @@
     <li><a routerLink="transfer" routerLinkActive="active-link" (click)="closeOffcanvas()"> {{ 'NAV.TRANSFERS' | t }}</a></li>
     <li><a routerLink="/" (click)="closeOffcanvas()">{{ 'NAV.BLOGS' | t }}</a></li>
     <li><a routerLink="/" (click)="closeOffcanvas()">{{ 'NAV.REVIEWS' | t }}</a></li>
-    <li><a routerLink="/" (click)="closeOffcanvas()">{{ 'NAV.ABOUT' | t }}</a></li>
+    <li><a routerLink="/about" (click)="closeOffcanvas()">{{ 'NAV.ABOUT' | t }}</a></li>
   </ul>
 
   <!-- Social Icons in Offcanvas -->

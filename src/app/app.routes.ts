@@ -30,6 +30,7 @@ import { UpdateCatTourComponent } from './adminCompoents/update-cat-tour/update-
 import { CreateTransferComponent } from './adminCompoents/create-transfer/create-transfer.component';
 import { UpdateTransferComponent } from './adminCompoents/update-transfer/update-transfer.component';
 import { authGuardGuard } from './core/guards/auth-guard.guard';
+import { AboutComponent } from './clientComponents/about/about.component';
 
 export const routes: Routes = [
     {
@@ -42,7 +43,7 @@ export const routes: Routes = [
             {path: 'transferDetail/:id',component:TransfersDetailComponent,title: 'Transfers Details' },
             {path: 'categrytourDetail/:id',component:CategoryTourDetailComponent,title: 'Tours Category Details' },
             {path: 'faq',component:FaqComponent,title: 'FAQ' },
-            {path: 'about',component:FaqComponent,title: 'About' },
+            {path: 'about',component:AboutComponent,title: 'About' },
         ] 
     },
     {

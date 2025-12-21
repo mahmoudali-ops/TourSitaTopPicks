@@ -1,0 +1,145 @@
+.about-container {
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+    background: #fff;
+  }
+  
+  /* =====================
+     Hero Section
+     ===================== */
+  .about-hero {
+    position: relative;
+    height: 60vh;
+    min-height: 380px;
+    overflow: hidden;
+  }
+  
+  .about-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+
+  
+  .hero-overlay h1 {
+    color: #fff;
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  
+  /* =====================
+     About Content
+     ===================== */
+  .about-content {
+    max-width: 1000px;
+    margin: 80px auto 60px;
+    padding: 0 20px;
+    text-align: center;
+  }
+  
+  .section-title {
+    font-size: 34px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: #0b3e56;
+  }
+  
+  .about-text {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 20px;
+  }
+  
+  /* =====================
+     Icons Section
+     ===================== */
+  .about-icons {
+    max-width: 1200px;
+    margin: 0 auto 80px;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+  }
+  
+  .icon-box {
+    background: #ffffff;
+    padding: 35px 25px;
+    border-radius: 18px;
+    text-align: center;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .icon-box:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+  }
+  
+  .icon-box i {
+    font-size: 42px;
+    color: #3a7bd5;
+    margin-bottom: 15px;
+  }
+  
+  .icon-box h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #0b3e56;
+  }
+  
+  .icon-box p {
+    font-size: 14.5px;
+    color: #666;
+    line-height: 1.6;
+  }
+  
+  /* =====================
+     Responsive
+     ===================== */
+  @media (max-width: 992px) {
+    .about-icons {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  
+    .hero-overlay h1 {
+      font-size: 38px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .about-hero {
+      height: 45vh;
+    }
+  
+    .hero-overlay h1 {
+      font-size: 32px;
+    }
+  
+    .section-title {
+      font-size: 28px;
+    }
+  
+    .about-text {
+      font-size: 15px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .about-icons {
+      grid-template-columns: 1fr;
+    }
+  
+    .hero-overlay h1 {
+      font-size: 26px;
+    }
+  
+    .about-content {
+      margin: 50px auto;
+    }
+  }
+  
