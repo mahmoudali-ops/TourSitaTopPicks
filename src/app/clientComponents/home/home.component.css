@@ -2395,3 +2395,34 @@ swiper-slide * {
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
 }
+
+/* Default (Desktop) */
+.btn-book {
+  background: #0651e7;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 6px;
+  transition: 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-book:hover {
+  background: #0545c9;
+}
+
+/* Mobile – very small */
+@media (max-width: 576px) {
+  .btn-book {
+    padding: 4px 10px;   /* أصغر بفرق واضح */
+    font-size: 11px;
+    border-radius: 4px;
+  }
+
+  .btn-book i {
+    font-size: 10px;
+  }
+}
