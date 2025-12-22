@@ -106,3 +106,38 @@
     justify-content: center;
   }
 }
+@media (max-width: 480px) {
+  .footer {
+    padding: 35px 0 15px;
+  }
+
+  .footer-logo {
+    font-size: 18px;
+    gap: 6px;
+  }
+
+  .footer-desc {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .footer-title {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  .footer-col a {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  .social-icons a {
+    font-size: 16px;
+  }
+
+  .footer-bottom {
+    font-size: 12px;
+    margin-top: 20px;
+    padding-top: 15px;
+  }
+}

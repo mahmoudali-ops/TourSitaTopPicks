@@ -9,5 +9,7 @@ export interface IEmail {
     fullTourName: string
     childernNumber:number
     adultsNumber:number
+    hotelName:string
+    roomNumber:number
   }
   
