@@ -27,9 +27,7 @@ export class ClientNavComponent implements OnInit {
     this.onWindowScroll();
   }
 
-  // ===============================
-  // Scroll Effect
-  // ===============================
+  // Scroll
   @HostListener('window:scroll')
   onWindowScroll(): void {
     if (!this.isBrowser) return;
@@ -40,16 +38,12 @@ export class ClientNavComponent implements OnInit {
     this.isScrolled = scrollPosition > 50;
   }
 
-  // ===============================
-  // Offcanvas Toggle
-  // ===============================
+  // Toggle Offcanvas
   toggleOffcanvas(): void {
     this.isOffcanvasOpen = !this.isOffcanvasOpen;
 
     if (this.isOffcanvasOpen) {
-      // iOS SAFE way (instead of overflow: hidden)
-      document.body.style.position = 'fixed';
-      document.body.style.width = '100%';
+      document.documentElement.style.overflow = 'hidden';
     } else {
       this.resetBody();
       this.activeDropdown = null;
@@ -63,13 +57,10 @@ export class ClientNavComponent implements OnInit {
   }
 
   private resetBody(): void {
-    document.body.style.position = '';
-    document.body.style.width = '';
+    document.documentElement.style.overflow = '';
   }
 
-  // ===============================
-  // Dropdown Toggle
-  // ===============================
+  // Dropdown
   toggleDropdown(event: Event, dropdownName: string): void {
     event.preventDefault();
     event.stopPropagation();
@@ -78,26 +69,7 @@ export class ClientNavComponent implements OnInit {
       this.activeDropdown === dropdownName ? null : dropdownName;
   }
 
-  // ===============================
-  // Close on Outside Click (Mobile)
-  // ===============================
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    if (!this.isOffcanvasOpen || window.innerWidth > 991) return;
-
-    const target = event.target as HTMLElement;
-
-    if (
-      !target.closest('.offcanvas-menu') &&
-      !target.closest('.hamburger-btn')
-    ) {
-      this.closeOffcanvas();
-    }
-  }
-
-  // ===============================
-  // Close on ESC
-  // ===============================
+  // ESC
   @HostListener('document:keydown.escape')
   onEscapeKey(): void {
     if (this.isOffcanvasOpen) {
@@ -105,9 +77,7 @@ export class ClientNavComponent implements OnInit {
     }
   }
 
-  // ===============================
-  // Language Change
-  // ===============================
+  // Language
   changeLang(lang: 'en' | 'de' | 'nl'): void {
     this.langService.setLanguage(lang);
     this.translationService.setLang(lang);
