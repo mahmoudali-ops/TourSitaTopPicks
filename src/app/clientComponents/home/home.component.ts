@@ -29,9 +29,12 @@ register();
 })
 export class HomeComponent  extends ReloadableComponent {
   
- constructor(ReloadService:ReloadService) {
-    super(ReloadService);
-  }
+ constructor(
+    ReloadService:ReloadService,
+    @Inject(PLATFORM_ID) private platformId: object
+  ) {
+      super(ReloadService);
+    }
 
   private readonly destnationservice=inject(DestnatoinService);
   private readonly TourService=inject(TourService);
@@ -99,19 +102,37 @@ export class HomeComponent  extends ReloadableComponent {
   // }
 
   @ViewChild('heroVideo') heroVideo!: ElementRef<HTMLVideoElement>;
+  videoFallback = false;
 
-ngAfterViewInit() {
-  const video = this.heroVideo.nativeElement;
+  ngAfterViewInit() {
+    if (!isPlatformBrowser(this.platformId) || !this.heroVideo) {
+      return;
+    }
 
-  video.muted = true;
-  video.volume = 0;
-  video.setAttribute('muted', '');
-  video.setAttribute('playsinline', '');
+    const video = this.heroVideo.nativeElement;
+    video.setAttribute('muted', '');
+    video.setAttribute('playsinline', '');
+    video.setAttribute('webkit-playsinline', '');
+    video.muted = true;
+    video.volume = 0;
 
-  video.play().catch(() => {
-    console.log('iOS autoplay blocked');
-  });
-}
+    const attemptPlay = () => {
+      video.play().catch(() => {
+        this.videoFallback = true;
+      });
+    };
+
+    if (video.readyState >= 2) {
+      attemptPlay();
+    } else {
+      video.addEventListener('loadedmetadata', attemptPlay, { once: true });
+      video.addEventListener('canplay', attemptPlay, { once: true });
+    }
+
+    video.addEventListener('error', () => {
+      this.videoFallback = true;
+    });
+  }
 
 
 

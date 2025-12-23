@@ -1580,6 +1580,18 @@ swiper-slide * {
   height: 100%;
   object-fit: cover;
   transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+.hero-fallback {
+  position: absolute;
+  inset: 0;
+  background: url('../../../assets/images/imageposter.png') center center / cover no-repeat;
+  z-index: 2;
+}
+
+.video-hidden {
+  display: none;
 }
 
 /* طبقة شفافة لتحسين وضوح النص */
