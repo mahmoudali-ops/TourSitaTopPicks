@@ -36,6 +36,9 @@ export class HomeComponent  extends ReloadableComponent {
       super(ReloadService);
     }
 
+    
+  isBrowser = isPlatformBrowser(this.platformId);
+
   private readonly destnationservice=inject(DestnatoinService);
   private readonly TourService=inject(TourService);
   private readonly CattourService=inject(CattourService)

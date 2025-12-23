@@ -107,6 +107,7 @@
       centered-slides="true"
     >
       @for (category of AllPopularHurghadaCat(); track category.id ) {
+       @if(isBrowser){
         <swiper-slide [routerLink]="['/categrytourDetail', category.id]" class="pointer">
           <div class="simple-vertical-slide">
             <div class="slide-bg-image">
@@ -124,6 +125,8 @@
             </div>
           </div>
         </swiper-slide>
+       }
+      
       }
     </swiper-container>
 
