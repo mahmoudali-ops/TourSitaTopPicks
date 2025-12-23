@@ -84,67 +84,46 @@ export class HomeComponent  extends ReloadableComponent {
     );
   }
   
-  
-  // ngOnDestroy(): void {
-  //   if(this.TourSUbs()){
-  //     this.TourSUbs()?.unsubscribe();
-  //   }  
-  
-  //   if(this.destnationSUbs()){
-  //     this.destnationSUbs()?.unsubscribe();
-  //   }
-  
-  //   if(this.HurghdadaCatSbss()){
-  //     this.HurghdadaCatSbss()?.unsubscribe();
-  //   }
-  
-  
-  // }
 
   @ViewChild('heroVideo') heroVideo!: ElementRef<HTMLVideoElement>;
-  videoFallback = false;
+videoFallback = false;
 
-  ngAfterViewInit() {
-    if (!isPlatformBrowser(this.platformId) || !this.heroVideo) {
-      return;
-    }
-
-    const video = this.heroVideo.nativeElement;
-    video.setAttribute('muted', '');
-    video.setAttribute('playsinline', '');
-    video.setAttribute('webkit-playsinline', '');
-    video.muted = true;
-    video.volume = 0;
-
-    const attemptPlay = (retry = 0) => {
-      video.play()
-        .catch(() => {
-          // iOS قد يرفض دون تفاعل، نعيد المحاولة سريعاً
-          if (retry < 2) {
-            setTimeout(() => attemptPlay(retry + 1), 200);
-          }
-        });
-    };
-
-    if (video.readyState >= 2) {
-      attemptPlay();
-    } else {
-      video.addEventListener('loadedmetadata', attemptPlay, { once: true });
-      video.addEventListener('canplay', attemptPlay, { once: true });
-    }
-
-    // في حال لم يصبح جاهزاً خلال فترة قصيرة، اعتبره فشل
-    setTimeout(() => {
-      if (video.readyState < 2 && video.paused) {
-        this.videoFallback = true;
-      }
-    }, 4000);
-
-    video.addEventListener('error', () => {
-      this.videoFallback = true;
-    });
+ngAfterViewInit() {
+  if (!isPlatformBrowser(this.platformId) || !this.heroVideo) {
+    return;
   }
 
+  const video = this.heroVideo.nativeElement;
 
+  video.setAttribute('muted', '');
+  video.setAttribute('playsinline', '');
+  video.setAttribute('webkit-playsinline', '');
+  video.muted = true;
+  video.volume = 0;
 
+  const attemptPlay = (retry = 0) => {
+    video.play().catch(() => {
+      if (retry < 2) {
+        setTimeout(() => attemptPlay(retry + 1), 200);
+      }
+    });
+  };
+
+  if (video.readyState >= 2) {
+    attemptPlay();
+  } else {
+    video.addEventListener('loadedmetadata', () => attemptPlay(), { once: true });
+    video.addEventListener('canplay', () => attemptPlay(), { once: true });
+  }
+
+  setTimeout(() => {
+    if (video.readyState < 2 && video.paused) {
+      this.videoFallback = true;
+    }
+  }, 4000);
+
+  video.addEventListener('error', () => {
+    this.videoFallback = true;
+  });
+}
 }
