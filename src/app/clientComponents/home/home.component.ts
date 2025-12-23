@@ -116,10 +116,14 @@ export class HomeComponent  extends ReloadableComponent {
     video.muted = true;
     video.volume = 0;
 
-    const attemptPlay = () => {
-      video.play().catch(() => {
-        this.videoFallback = true;
-      });
+    const attemptPlay = (retry = 0) => {
+      video.play()
+        .catch(() => {
+          // iOS قد يرفض دون تفاعل، نعيد المحاولة سريعاً
+          if (retry < 2) {
+            setTimeout(() => attemptPlay(retry + 1), 200);
+          }
+        });
     };
 
     if (video.readyState >= 2) {
@@ -128,6 +132,13 @@ export class HomeComponent  extends ReloadableComponent {
       video.addEventListener('loadedmetadata', attemptPlay, { once: true });
       video.addEventListener('canplay', attemptPlay, { once: true });
     }
+
+    // في حال لم يصبح جاهزاً خلال فترة قصيرة، اعتبره فشل
+    setTimeout(() => {
+      if (video.readyState < 2 && video.paused) {
+        this.videoFallback = true;
+      }
+    }, 4000);
 
     video.addEventListener('error', () => {
       this.videoFallback = true;
