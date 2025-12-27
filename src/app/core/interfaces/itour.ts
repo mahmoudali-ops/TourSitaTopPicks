@@ -17,6 +17,7 @@ export interface ITour {
   descriptions: string
   linkVideo: any
   referneceName: string
+  slug: string
 }
 
 export interface IDetailedTour {
@@ -38,6 +39,7 @@ export interface IDetailedTour {
   descriptions: string
   linkVideo: any
   referneceName: string
+  slug: string
   tourImgs: TourImg[]
   highlights: Highlight[]
   includedItems: IncludedItem[]

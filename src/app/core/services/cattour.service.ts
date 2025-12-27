@@ -18,8 +18,8 @@ private readonly httpClient=inject(HttpClient);
       return this.httpClient.get(`${environment.BaseUrl}/api/CategorTour/admin`);
     }
 
-    getDetaildedCategorTour(id:number|null):Observable<any>{
-      return this.httpClient.get(`${environment.BaseUrl}/api/CategorTour/${id}`);
+    getDetaildedCategorTour(slug:string|null):Observable<any>{
+      return this.httpClient.get(`${environment.BaseUrl}/api/CategorTour/by-slug/${slug}`);
     }
 
     createCatTour(data:FormData):Observable<any>{
@@ -29,6 +29,10 @@ private readonly httpClient=inject(HttpClient);
       return this.httpClient.put(`${environment.BaseUrl}/api/CategorTour/update/${id}`,data);
     }
     
+    getAllDetaildedCategoryTour(id:number|null):Observable<any>{
+      return this.httpClient.get(`${environment.BaseUrl}/api/CategorTour/get-CatgeroyTour-for-update/${id}`);
+    }
+
     deleteCatTour(id:number):Observable<any>{
       return this.httpClient.delete(`${environment.BaseUrl}/api/CategorTour/delete/${id}`);
     }

@@ -16,12 +16,12 @@
           <a class="nav-link dropdown-toggle">  {{ 'NAV.HURGHADA_TOURS' | t }}</a>
         
           <ul class="dropdown-menu">
-            <li><a [routerLink]="['/categrytourDetail', 38]">{{ 'NAV.CAIRO_TOURS' | t }}</a></li>
-            <li><a [routerLink]="['/categrytourDetail', 39]"> {{ 'NAV.LUXOR_TOURS' | t }}</a></li>
-            <li><a [routerLink]="['/categrytourDetail', 40]">{{ 'NAV.SAFARI_TOURS' | t }}</a></li>
-            <li><a [routerLink]="['/categrytourDetail', 28]">{{ 'NAV.SEA_TOURS' | t }}</a></li>
-            <li><a [routerLink]="['/categrytourDetail', 37]">Diving</a></li>
-            <li><a [routerLink]="['/categrytourDetail', 34]"> {{ 'NAV.THINGS_TO_DO_HURGHADA' | t }}</a></li>
+            <li><a [routerLink]="['/categrytourDetail', 'cairo-tours-hurghada']">{{ 'NAV.CAIRO_TOURS' | t }}</a></li>
+            <li><a [routerLink]="['/categrytourDetail', 'luxor-tours-hurghada']"> {{ 'NAV.LUXOR_TOURS' | t }}</a></li>
+            <li><a [routerLink]="['/categrytourDetail', 'safari-tours-hurghada']">{{ 'NAV.SAFARI_TOURS' | t }}</a></li>
+            <li><a [routerLink]="['/categrytourDetail', 'sea-tours-hurghada']">{{ 'NAV.SEA_TOURS' | t }}</a></li>
+            <li><a [routerLink]="['/categrytourDetail', 'diving']">Diving</a></li>
+            <li><a [routerLink]="['/categrytourDetail', 'thing-to-do-hurghada']"> {{ 'NAV.THINGS_TO_DO_HURGHADA' | t }}</a></li>
           </ul>
         </li>
 
@@ -97,12 +97,12 @@
         <i class="fas fa-chevron-down"></i>
       </a>
       <ul class="dropdown-submenu" [class.open]="activeDropdown === 'hurghada'">
-        <li><a [routerLink]="['/categrytourDetail', 38]" (click)="closeOffcanvas()">{{ 'NAV.CAIRO_TOURS' | t }}</a></li>
-        <li><a [routerLink]="['/categrytourDetail', 39]" (click)="closeOffcanvas()">{{ 'NAV.LUXOR_TOURS' | t }}</a></li>
-        <li><a [routerLink]="['/categrytourDetail', 40]" (click)="closeOffcanvas()">{{ 'NAV.SAFARI_TOURS' | t }}</a></li>
-        <li><a [routerLink]="['/categrytourDetail', 28]" (click)="closeOffcanvas()">{{ 'NAV.SEA_TOURS' | t }}</a></li>
-        <li><a [routerLink]="['/categrytourDetail', 37]" (click)="closeOffcanvas()">Diving</a></li>
-        <li><a [routerLink]="['/categrytourDetail', 34]" (click)="closeOffcanvas()">{{ 'NAV.THINGS_TO_DO_HURGHADA' | t }}</a></li>
+        <li><a [routerLink]="['/categrytourDetail', 'cairo-tours-hurghada']" (click)="closeOffcanvas()">{{ 'NAV.CAIRO_TOURS' | t }}</a></li>
+        <li><a [routerLink]="['/categrytourDetail', 'luxor-tours-hurghada']" (click)="closeOffcanvas()">{{ 'NAV.LUXOR_TOURS' | t }}</a></li>
+        <li><a [routerLink]="['/categrytourDetail', 'safari-tours-hurghada']" (click)="closeOffcanvas()">{{ 'NAV.SAFARI_TOURS' | t }}</a></li>
+        <li><a [routerLink]="['/categrytourDetail', 'sea-tours-hurghada']" (click)="closeOffcanvas()">{{ 'NAV.SEA_TOURS' | t }}</a></li>
+        <li><a [routerLink]="['/categrytourDetail', 'diving']" (click)="closeOffcanvas()">Diving</a></li>
+        <li><a [routerLink]="['/categrytourDetail', 'thing-to-do-hurghada']" (click)="closeOffcanvas()">{{ 'NAV.THINGS_TO_DO_HURGHADA' | t }}</a></li>
       </ul>
     </li>
 

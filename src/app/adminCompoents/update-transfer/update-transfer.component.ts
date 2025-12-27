@@ -4,6 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { TransferService } from '../../core/services/transfer.service';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { environment } from '../../core/environments/environments';
 
 interface FormErrorSummary {
   label: string;
@@ -127,7 +128,7 @@ export class UpdateTransferComponent  {
       this.patchText(res.notIncludeds, 'notIncludes');
       this.patchText(res.highlights, 'highlights');
 
-      this.imagePreview = `https://localhost:7065/${res.imageCover}`;
+      this.imagePreview = `${environment.BaseUrl}/${res.imageCover}`;
     });
   }
 

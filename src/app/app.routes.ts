@@ -39,9 +39,9 @@ export const routes: Routes = [
             {path: '',redirectTo: 'home',pathMatch: 'full' },
             {path: 'home',component:HomeComponent,title: 'Home' },  
             {path: 'transfer',component:TransferComponent,title: 'Transfers' },
-            {path: 'tourDetail/:id',component:TOurDetailComponent,title: 'Tour Details' },
-            {path: 'transferDetail/:id',component:TransfersDetailComponent,title: 'Transfers Details' },
-            {path: 'categrytourDetail/:id',component:CategoryTourDetailComponent,title: 'Tours Category Details' },
+            {path: 'tourDetail/:slug',component:TOurDetailComponent,title: 'Tour Details' },
+            {path: 'transferDetail/:slug',component:TransfersDetailComponent,title: 'Transfers Details' },
+            {path: 'categrytourDetail/:slug',component:CategoryTourDetailComponent,title: 'Tours Category Details' },
             {path: 'faq',component:FaqComponent,title: 'FAQ' },
             {path: 'about',component:AboutComponent,title: 'About' },
         ] 

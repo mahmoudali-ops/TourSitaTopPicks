@@ -1,5 +1,5 @@
 import { Component, ElementRef, inject, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { TourService } from '../../core/services/tour.service';
@@ -8,121 +8,128 @@ import { CommonModule, NgClass } from '@angular/common';
 @Component({
   selector: 'app-create-tour',
   standalone: true,
-  imports: [ReactiveFormsModule,NgClass,CommonModule],
+  imports: [ReactiveFormsModule,CommonModule],
   templateUrl: './create-tour.component.html',
   styleUrl: './create-tour.component.css'
 })
 export class CreateTourComponent {
-  private readonly toaster = inject(ToastrService);
-  private readonly router = inject(Router);
-
-  tourForm: FormGroup;
-  selectedFile: File | null = null;
-  imagePreview: string | ArrayBuffer | null = null;
-  errorSummary: string[] = [];
-
-
   @ViewChild('fileInput') fileInput!: ElementRef;
 
-  constructor(private fb: FormBuilder, private tourService: TourService) {
+  imagePreview: string | ArrayBuffer | null = null;
+  selectedFile: File | null = null;
 
+  languages = ['en', 'de', 'pl'];
+  activeLang = 'en';
+
+  categories = [
+    { id: 28, name: 'sea tours hurghada' },
+    { id: 34, name: 'thing to do hurghada' },
+    { id: 37, name: 'diving' },
+    { id: 38, name: 'cairo tours hurghada' },
+    { id: 39, name: 'luxor tours hurghada' },
+    { id: 40, name: 'safari tours hurghada' }
+  ];
+
+  tourForm: FormGroup;
+
+  constructor(
+    private fb: FormBuilder,
+    private tourService: TourService,
+    private toastr: ToastrService,
+    private router: Router
+  ) {
     this.tourForm = this.fb.group({
-      title: ['', Validators.required],
-      description: ['', Validators.required],
-      metaDescription: ['', Validators.required],
-      metaKeyWords: ['', Validators.required],
-      referenceName: ['', Validators.required],
       isActive: [true],
-
-      linkVideo: [''],
-      languageOptions: ['', Validators.required],
+      duration: ['', Validators.required],
+      price: ['', Validators.required],
       startLocation: ['', Validators.required],
       endLocation: ['', Validators.required],
-      duration: [0, Validators.required],
-      price: [0, Validators.required],
+      languageOptions: ['en,de,pl'],
+      referenceName: ['', Validators.required],
+      linkVideo: [''],
+      fkCategoryId: [null, Validators.required],
 
-      fkCategoryId: [null],
-      fkDestinationId: [null, Validators.required],
-
+      translations: this.fb.array([]),
       includesList: this.fb.array([]),
       notIncludedList: this.fb.array([]),
       highlightList: this.fb.array([]),
-      imagesList: this.fb.array([]),
+      imagesList: this.fb.array([])
     });
+
+    this.languages.forEach(lang => this.addTranslation(lang));
   }
 
-  // ========== GETTERS ==========
+  // ===================== GETTERS =====================
+  get translations() { return this.tourForm.get('translations') as FormArray; }
   get includesList() { return this.tourForm.get('includesList') as FormArray; }
   get notIncludedList() { return this.tourForm.get('notIncludedList') as FormArray; }
   get highlightList() { return this.tourForm.get('highlightList') as FormArray; }
   get imagesList() { return this.tourForm.get('imagesList') as FormArray; }
-  galleryPreview: string[] = [];
 
-  onGalleryImageSelected(event: any, index: number) {
-    const file = event.target.files[0];
-    if (!file) return;
-  
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.galleryPreview[index] = reader.result as string;
-  
-      this.imagesList.at(index).patchValue({
-        ImageFile: file
-      });
-    };
-  
-    reader.readAsDataURL(file);
-  }
-  
-  addGalleryImage() {
-    this.imagesList.push(
-      this.fb.group({
-        Title: ['', Validators.required],
-        ReferenceName: ['', Validators.required],
-        ImageFile: [null, Validators.required],
-        IsActive: [true]
-      })
-    );
-  
-    this.galleryPreview.push('');
-  }
-  
-  removeGalleryImage(index: number) {
-    this.imagesList.removeAt(index);
-    this.galleryPreview.splice(index, 1);
-  }
-  
-  // ========== ADD / REMOVE ==========
-  addInclude() { this.includesList.push(this.fb.group({ Text: ['', Validators.required] })); }
-  removeInclude(i: number) { this.includesList.removeAt(i); }
-
-  addNotIncluded() { this.notIncludedList.push(this.fb.group({ Text: ['', Validators.required] })); }
-  removeNotIncluded(i: number) { this.notIncludedList.removeAt(i); }
-
-  addHighlight() { this.highlightList.push(this.fb.group({ Text: ['', Validators.required] })); }
-  removeHighlight(i: number) { this.highlightList.removeAt(i); }
-
-  addImage() {
-    this.imagesList.push(this.fb.group({
-      Title: ['', Validators.required],
-      ReferenceName: ['', Validators.required],
-      ImageFile: [null, Validators.required],
-      IsActive: [true]
+  // ===================== TRANSLATIONS =====================
+  addTranslation(lang: string) {
+    this.translations.push(this.fb.group({
+      language: [lang],
+      title: ['', Validators.required],
+      description: ['', Validators.required]
     }));
   }
-  removeImage(i: number) { this.imagesList.removeAt(i); }
 
-  // ========== SELECT MAIN IMAGE ==========
+  // ===================== INCLUDES =====================
+  addInclude(lang: string) {
+    this.includesList.push(this.fb.group({
+      language: [lang, Validators.required],
+      text: ['', Validators.required]
+    }));
+  }
+  removeInclude(i: number) { this.includesList.removeAt(i); }
+
+  addNotInclude(lang: string) {
+    this.notIncludedList.push(this.fb.group({
+      language: [lang, Validators.required],
+      text: ['', Validators.required]
+    }));
+  }
+  removeNotInclude(i: number) { this.notIncludedList.removeAt(i); }
+
+  addHighlight(lang: string) {
+    this.highlightList.push(this.fb.group({
+      language: [lang, Validators.required],
+      text: ['', Validators.required]
+    }));
+  }
+  removeHighlight(i: number) { this.highlightList.removeAt(i); }
+
+  // ===================== IMAGES =====================
+  addImage() {
+    this.imagesList.push(this.fb.group({
+      imageFile: [null, Validators.required],
+      isActive: [true],
+      translations: this.fb.array(
+        this.languages.map(lang =>
+          this.fb.group({
+            language: [lang],
+            title: ['', Validators.required],
+            tourName: ['']
+          })
+        )
+      )
+    }));
+  }
+
+  removeImage(i: number) {
+    this.imagesList.removeAt(i);
+  }
+
+  // ===================== MAIN IMAGE =====================
   onFileSelected(event: any) {
-    if (event.target.files && event.target.files.length > 0) {
-      this.selectedFile = event.target.files[0];
+    const file = event.target.files[0];
+    if (!file) return;
 
-      const reader = new FileReader();
-      if (this.selectedFile) {   // ← هنا نضيف check
-        reader.onload = () => this.imagePreview = reader.result;
-        reader.readAsDataURL(this.selectedFile);
-      }
-    }
+    this.selectedFile = file;
+    const reader = new FileReader();
+    reader.onload = () => this.imagePreview = reader.result;
+    reader.readAsDataURL(file);
   }
 
   removeMainImage() {
@@ -131,102 +138,66 @@ export class CreateTourComponent {
     this.fileInput.nativeElement.value = '';
   }
 
-  // ========== SUBMIT ==========
+  // ===================== SUBMIT =====================
   onSubmit() {
-    this.generateErrorSummary();
-
     if (this.tourForm.invalid) {
-      this.toaster.error('Please complete all required fields.');
+      this.toastr.error('Please fill all required fields');
       return;
     }
 
     const formData = new FormData();
 
-    formData.append('Title', this.tourForm.get('title')!.value);
-    formData.append('Description', this.tourForm.get('description')!.value);
-    formData.append('MetaDescription', this.tourForm.get('metaDescription')!.value);
-    formData.append('MetaKeyWords', this.tourForm.get('metaKeyWords')!.value);
-    formData.append('ReferenceName', this.tourForm.get('referenceName')!.value);
-    formData.append('IsActive', this.tourForm.get('isActive')!.value);
+    formData.append('IsActive', this.tourForm.value.isActive);
+    formData.append('Duration', this.tourForm.value.duration);
+    formData.append('Price', this.tourForm.value.price);
+    formData.append('StartLocation', this.tourForm.value.startLocation);
+    formData.append('EndLocation', this.tourForm.value.endLocation);
+    formData.append('LanguageOptions', this.tourForm.value.languageOptions);
+    formData.append('ReferneceName', this.tourForm.value.referenceName);
+    formData.append('LinkVideo', this.tourForm.value.linkVideo || '');
+    formData.append('FK_CategoryID', this.tourForm.value.fkCategoryId);
+    formData.append('FK_DestinationID', '2');
 
-    formData.append('LinkVideo', this.tourForm.get('linkVideo')!.value);
-    formData.append('LanguageOptions', this.tourForm.get('languageOptions')!.value);
-    formData.append('StartLocation', this.tourForm.get('startLocation')!.value);
-    formData.append('EndLocation', this.tourForm.get('endLocation')!.value);
-    formData.append('Duration', this.tourForm.get('duration')!.value);
-    formData.append('Price', this.tourForm.get('price')!.value);
+    if (this.selectedFile) {
+      formData.append('ImageFile', this.selectedFile);
+    }
 
-    formData.append('FK_CategoryID', this.tourForm.get('fkCategoryId')!.value);
-    formData.append('FK_DestinationID', this.tourForm.get('fkDestinationId')!.value);
-
-    // Lists → JSON
+    formData.append('TranslationsJson', JSON.stringify(this.translations.value));
     formData.append('IncludesJson', JSON.stringify(this.includesList.value));
     formData.append('NonIncludesJson', JSON.stringify(this.notIncludedList.value));
-    formData.append('HightlightJson', JSON.stringify(this.highlightList.value));
+    formData.append('hightlightJson', JSON.stringify(this.highlightList.value));
 
-    // Multiple images  
-    this.imagesList.controls.forEach((ctrl: any, index: number) => {
-      const imgFile = ctrl.get('ImageFile').value;
-
-      if (imgFile) {
-        formData.append(`ImagesList[${index}].ImageFile`, imgFile);
-        formData.append(`ImagesList[${index}].Title`, ctrl.get('Title').value);
-        formData.append(`ImagesList[${index}].ReferenceName`, ctrl.get('ReferenceName').value);
-        formData.append(`ImagesList[${index}].IsActive`, ctrl.get('IsActive').value);
-      }
+    this.imagesList.controls.forEach((img, i) => {
+      formData.append(`ImagesList[${i}].ImageFile`, img.value.imageFile);
+      formData.append(`ImagesList[${i}].IsActive`, img.value.isActive);
+      formData.append(`ImagesList[${i}].TranslationsJson`,
+        JSON.stringify(img.value.translations));
     });
-
-    // Main image
-    if (this.selectedFile) formData.append('ImageFile', this.selectedFile);
 
     this.tourService.createTour(formData).subscribe({
       next: () => {
-        this.toaster.success('Tour created successfully!');
+        this.toastr.success('Tour created successfully');
         this.router.navigate(['/admin/tours']);
       },
-      error: () => this.toaster.error('Something went wrong while creating tour.')
+      error: () => this.toastr.error('Error creating tour')
     });
   }
 
-  generateErrorSummary() {
-    this.errorSummary = []; // reset list
-  
-    const controls = this.tourForm.controls;
-  
-    for (let key in controls) {
-      const control = controls[key];
-  
-      if (control.errors) {
-        if (control.errors['required']) {
-          this.errorSummary.push(`حقل (${key}) مطلوب.`);
-        }
-  
-        if (control.errors['minlength']) {
-          this.errorSummary.push(
-            `حقل (${key}) يجب أن يحتوي على ${control.errors['minlength'].requiredLength} أحرف على الأقل.`
-          );
-        }
-  
-        if (control.errors['maxlength']) {
-          this.errorSummary.push(
-            `حقل (${key}) يجب ألا يتجاوز ${control.errors['maxlength'].requiredLength} حرف.`
-          );
-        }
-  
-        if (control.errors['email']) {
-          this.errorSummary.push(`صيغة البريد الإلكتروني في (${key}) غير صحيحة.`);
-        }
-      }
-    }
-  
-    /* For FormArray fields like Includes, Gallery etc */
-    if (this.includesList.invalid) {
-      this.errorSummary.push(`لا بد من إدخال كل عناصر قسم (Includes).`);
-    }
-  
-    if (this.imagesList.invalid) {
-      this.errorSummary.push(`برجاء التأكد من رفع كل الصور المطلوبة.`); 
-    }
+
+  onImageChange(event: Event, index: number) {
+  const file = (event.target as HTMLInputElement).files?.[0];
+  if (!file) return;
+
+  const imgGroup = this.tourImages.at(index) as FormGroup;
+  imgGroup.get('imageFile')?.setValue(file);
+}
+  get tourImages() {
+    return this.tourForm.get('imagesList') as FormArray;
   }
+
+  getImageTranslations(img: AbstractControl): FormArray {
+    return img.get('translations') as FormArray;
+  }
+
   
 }

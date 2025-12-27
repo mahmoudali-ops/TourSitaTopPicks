@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { CattourService } from './../../core/services/cattour.service';
-import { NgClass } from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
 import { Component, ElementRef, inject, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -10,82 +10,142 @@ import { SearchPipe } from '../../core/pipes/search.pipe';
 @Component({
   selector: 'app-create-cat-tour',
   standalone: true,
-  imports: [ReactiveFormsModule,NgClass],
+  imports: [ReactiveFormsModule,NgClass,CommonModule],
   templateUrl: './create-cat-tour.component.html',
   styleUrl: './create-cat-tour.component.css'
 })
 export class CreateCatTourComponent {
+  private readonly toaster = inject(ToastrService);
+  private readonly router = inject(Router);
 
-  private readonly toasterService=inject(ToastrService)
-  private readonly _router=inject(Router);
+  languages = ['en', 'de', 'nl'];
 
+  catTourForm: FormGroup;
+  formErrors: { label: string; lang?: string }[] = [];
 
-
-  destForm: FormGroup;
   selectedFile: File | null = null;
   imagePreview: string | ArrayBuffer | null = null;
 
+  selectedLang: string = 'en';
 
-  constructor(private fb: FormBuilder, private destService: CattourService) {
-    this.destForm = this.fb.group({
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+
+  constructor(
+    private fb: FormBuilder,
+    private catTourService: CattourService
+  ) {
+    this.catTourForm = this.buildForm();
+  }
+
+  // =========================
+  // Form Builder
+  // =========================
+  private buildForm(): FormGroup {
+    const translationsGroup: any = {};
+    this.languages.forEach(lang => {
+      translationsGroup[lang] = this.createTranslationGroup();
+    });
+
+    return this.fb.group({
+      referenceName: ['', Validators.required],
+      isActive: [true],
+
+      translations: this.fb.group(translationsGroup)
+    });
+  }
+
+  private createTranslationGroup(): FormGroup {
+    return this.fb.group({
       title: ['', Validators.required],
-      description: ['',Validators.required],
-      metaDescription: ['',Validators.required],
-      metaKeyWords: ['',Validators.required],
-      referenceName: ['',Validators.required],
-      isActive: [true]
+      description: ['',Validators.required]
     });
   }
 
+  // =========================
+  // Helpers
+  // =========================
+  getTranslationGroup(lang: string): FormGroup {
+    return this.catTourForm.get(['translations', lang]) as FormGroup;
+  }
+
+  // =========================
+  // Image
+  // =========================
   onFileSelected(event: any) {
-    if (event.target.files && event.target.files.length > 0) {
-      this.selectedFile = event.target.files[0];
-  
-      const reader = new FileReader();
-      if (this.selectedFile) {   // ← هنا نضيف check
-        reader.onload = () => this.imagePreview = reader.result;
-        reader.readAsDataURL(this.selectedFile);
-      }
-    }
+    if (!event.target.files?.length) return;
+
+    this.selectedFile = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = () => (this.imagePreview = reader.result);
+    if (this.selectedFile){
+    reader.readAsDataURL(this.selectedFile);
   }
-  
-  onSubmit() {
-    if (this.destForm.invalid) {
-      this.toasterService.error('All form fields must be filled out before submitting.', 'Form Validation');
-      return
-    };
-
-    const formData = new FormData();
-    formData.append('Title', this.destForm.get('title')?.value);
-    formData.append('Description', this.destForm.get('description')?.value);
-    formData.append('MetaDescription', this.destForm.get('metaDescription')?.value);
-    formData.append('MetaKeyWords', this.destForm.get('metaKeyWords')?.value);
-    formData.append('ReferenceName', this.destForm.get('referenceName')?.value);
-    formData.append('IsActive', this.destForm.get('isActive')?.value);
-
-    if (this.selectedFile) {
-      formData.append('ImageFile', this.selectedFile);
-    }
-
-    this.destService.createCatTour(formData).subscribe({
-      next:(res)=>{
-        this.toasterService.success("New Category Tour Created Successfully", 'Creation Sent');
-        this.destForm.reset();
-         this._router.navigate(['/admin/categorytour']);
-
-           }
-      ,
-      error:(err:HttpErrorResponse)=>{
-        this.toasterService.error("There was an error to create new Category Tour. Please try again later.", 'Creation Error');
-      }
-    });
   }
-  @ViewChild('fileInput') fileInput!: ElementRef;
 
   removeImage() {
     this.selectedFile = null;
     this.imagePreview = null;
     this.fileInput.nativeElement.value = '';
+  }
 
+  // =========================
+  // Error Summary
+  // =========================
+  buildErrorSummary() {
+    this.formErrors = [];
+
+    if (this.catTourForm.get('referenceName')?.invalid) {
+      this.formErrors.push({ label: 'Reference Name' });
+    }
+
+    this.languages.forEach(lang => {
+      const group = this.getTranslationGroup(lang);
+      if (group.get('title')?.invalid) {
+        this.formErrors.push({ label: 'Title', lang });
+      }
+      if (group.get('description')?.invalid) {
+        this.formErrors.push({ label: 'Description', lang });
+      }
+    });
+  }
+
+  // =========================
+  // Submit
+  // =========================
+  onSubmit() {
+    this.buildErrorSummary();
+
+    if (this.catTourForm.invalid) {
+      this.toaster.error('Please complete required fields', 'Validation Error');
+      return;
+    }
+
+    const formData = new FormData();
+
+    formData.append('ReferneceName', this.catTourForm.value.referenceName);
+    formData.append('IsActive', this.catTourForm.value.isActive);
+
+    const translations = this.languages.map(lang => ({
+      Language: lang,
+      Title: this.getTranslationGroup(lang).value.title,
+      Description: this.getTranslationGroup(lang).value.description
+    }));
+
+    formData.append('TranslationsJson', JSON.stringify(translations));
+
+    if (this.selectedFile) {
+      formData.append('ImageFile', this.selectedFile);
+    }
+
+    this.catTourService.createCatTour(formData).subscribe({
+      next: () => {
+        this.toaster.success('Category Tour created successfully', 'Success');
+        this.catTourForm.reset({ isActive: true });
+        this.router.navigate(['/admin/categorytour']);
+      },
+      error: () => {
+        this.toaster.error('Error creating category tour', 'Error');
+      }
+    });
   }
 }

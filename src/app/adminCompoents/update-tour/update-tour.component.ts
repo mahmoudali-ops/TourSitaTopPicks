@@ -81,7 +81,7 @@ export class UpdateTourComponent {
 
   // ========== Load Tour ==========
   loadTour(id: number) {
-    this.tourService.getDetaildedTOur(id).subscribe({
+    this.tourService.getAllDetaildedCategoryTour(id).subscribe({
       next: (tour: any) => {
         // Fill main form
         this.tourForm.patchValue({

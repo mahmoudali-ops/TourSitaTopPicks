@@ -25,8 +25,8 @@ export class TourService {
   }
   
 
-  getDetaildedTOur(id:number|null):Observable<any>{
-    return this.httpcleint.get(`${environment.BaseUrl}/api/Tours/${id}`);
+  getDetaildedTOur(slug:string|null):Observable<any>{
+    return this.httpcleint.get(`${environment.BaseUrl}/api/Tours/by-slug/${slug}`);
   }
   createTour(data:FormData):Observable<any>{
     return this.httpcleint.post(`${environment.BaseUrl}/api/Tours/create`,data);
@@ -37,5 +37,9 @@ export class TourService {
   
   deleteTour(id:number):Observable<any>{
     return this.httpcleint.delete(`${environment.BaseUrl}/api/Tours/delete/${id}`);
+  }
+
+  getAllDetaildedCategoryTour(id:number|null):Observable<any>{
+    return this.httpcleint.get(`${environment.BaseUrl}/api/CategorTour/get-CatgeroyTour-for-update/${id}`);
   }
 }

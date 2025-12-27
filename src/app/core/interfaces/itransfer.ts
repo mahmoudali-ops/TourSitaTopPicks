@@ -6,6 +6,7 @@ export interface Itransfer {
   destinationName: string
   names: string
   descriptions: string
+  slug: string
 }
 
 export interface ItransferWithPrices {
@@ -17,6 +18,7 @@ export interface ItransferWithPrices {
   names: string
   descriptions: string
   referneceName: string
+  slug: string
   pricesList: PricesList[]
   includeds: Included[]
   notIncludeds: NotIncluded[]

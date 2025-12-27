@@ -7,10 +7,12 @@ export interface ICatTour {
   titles: string
   descriptions: string
   referneceName: string
+  slug: string
 }
 
 export interface IdetailedCattour {
     id: number
+    slug: string
     imageCover: string
     isActive: boolean
     titles: string
