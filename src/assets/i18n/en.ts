@@ -89,7 +89,7 @@ export const EN = {
     },
     ABOUT: {
       TITLE: 'About Us',
-      INTRO: 'RedSea Tours is a leading travel company offering unforgettable travel experiences in Egypt and around the world.',
+      INTRO: 'TopPicks Travels is a leading travel company offering unforgettable travel experiences in Egypt and around the world.',
       DESCRIPTION: 'Since 2010, we believe every journey tells a story and every adventure creates lasting memories. We combine top-notch service with modern travel experiences.',
       FEATURES: {
         CUSTOMERS: 'Over 50,000 satisfied customers',
@@ -100,4 +100,3 @@ export const EN = {
     }
      
   };
-  

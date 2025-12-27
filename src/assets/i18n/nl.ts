@@ -91,7 +91,7 @@ export const NL = {
     },
     ABOUT: {
       TITLE: 'O nas',
-      INTRO: 'RedSea Tours to wiodąca firma turystyczna oferująca niezapomniane doświadczenia podróżnicze w Egipcie i na całym świecie.',
+      INTRO: 'TopPicks Travels to wiodąca firma turystyczna oferująca niezapomniane doświadczenia podróżnicze w Egipcie i na całym świecie.',
       DESCRIPTION: 'Od 2010 roku wierzymy, że każda podróż opowiada historię, a każda przygoda tworzy trwałe wspomnienia. Łączymy najwyższej jakości obsługę z nowoczesnymi doświadczeniami podróżniczymi.',
       FEATURES: {
         CUSTOMERS: 'Ponad 50 000 zadowolonych klientów',
@@ -101,4 +101,3 @@ export const NL = {
       BUTTON: 'Dowiedz się więcej'
     }
   };
-  
