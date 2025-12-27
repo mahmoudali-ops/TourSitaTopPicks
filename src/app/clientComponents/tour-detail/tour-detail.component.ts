@@ -55,7 +55,7 @@ export class TOurDetailComponent  extends ReloadableComponent  {
     this.activeRoute.paramMap
       .pipe(
         switchMap(params => {
-          const slug = params.get('slug');
+          const slug =Number( params.get('slug'));
           return this.TourService.getDetaildedTOur(slug);
         }),
         takeUntil(this.destroy$)

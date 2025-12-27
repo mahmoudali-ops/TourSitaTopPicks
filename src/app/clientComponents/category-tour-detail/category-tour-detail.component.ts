@@ -42,7 +42,7 @@ export class CategoryTourDetailComponent  extends ReloadableComponent {
     this.activeRouete.paramMap
       .pipe(
         switchMap(params => {
-          const slug = params.get('slug');
+          const slug =Number( params.get('slug'));
           return this.categoryService.getDetaildedCategorTour(slug);
         }),
         takeUntil(this.destroy$) // <-- هنا بنستخدم takeUntil
