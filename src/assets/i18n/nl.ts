@@ -103,7 +103,7 @@ export const NL = {
     ,
      Review: 'Przeczytaj, co mówią nasi podróżnicy — i podziel się z nami własnymi doświadczeniami!',
 
-    BLOGS: {
+     BLOGS: {
       TITLE: "Blog podróżniczy",
       SUBTITLE: "Inspirujące historie podróżnicze, porady i przewodniki od TopPicksTravels",
       READ_MORE: "Czytaj więcej →",
