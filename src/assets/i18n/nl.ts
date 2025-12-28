@@ -101,7 +101,7 @@ export const NL = {
       BUTTON: 'Dowiedz się więcej'
     }
     ,
-    Review: 'Przeczytaj, co mówią nasi podróżnicy — i podziel się z nami własnymi doświadczeniami!',
+     Review: 'Przeczytaj, co mówią nasi podróżnicy — i podziel się z nami własnymi doświadczeniami!',
 
     BLOGS: {
       TITLE: "Blog podróżniczy",
