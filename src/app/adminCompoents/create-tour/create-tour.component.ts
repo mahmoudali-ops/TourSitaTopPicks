@@ -1,26 +1,39 @@
 import { Component, ElementRef, inject, ViewChild } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { TourService } from '../../core/services/tour.service';
 import { CommonModule, NgClass } from '@angular/common';
 
+interface FormErrorSummary {
+  label: string;
+  lang?: string;
+}
+
+interface TourImageItem {
+  file: File | null;
+  preview: string | ArrayBuffer | null;
+  isActive: boolean;
+  translations: {
+    lang: string;
+    title: string;
+    tourName: string;
+  }[];
+}
+
 @Component({
   selector: 'app-create-tour',
   standalone: true,
-  imports: [ReactiveFormsModule,CommonModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './create-tour.component.html',
   styleUrl: './create-tour.component.css'
 })
 export class CreateTourComponent {
-  @ViewChild('fileInput') fileInput!: ElementRef;
+  private readonly toaster = inject(ToastrService);
+  private readonly router = inject(Router);
 
-  imagePreview: string | ArrayBuffer | null = null;
-  selectedFile: File | null = null;
-
-  languages = ['en', 'de', 'pl'];
-  activeLang = 'en';
-
+  languages = ['en', 'de', 'nl'];
+  selectedLang: string = 'en';
   categories = [
     { id: 28, name: 'sea tours hurghada' },
     { id: 34, name: 'thing to do hurghada' },
@@ -29,175 +42,347 @@ export class CreateTourComponent {
     { id: 39, name: 'luxor tours hurghada' },
     { id: 40, name: 'safari tours hurghada' }
   ];
-
   tourForm: FormGroup;
+  formErrors: FormErrorSummary[] = [];
+
+  // =========================
+  // Main Image
+  // =========================
+  selectedMainImage: File | null = null;
+  mainImagePreview: string | ArrayBuffer | null = null;
+
+  @ViewChild('mainImageInput') mainImageInput!: ElementRef<HTMLInputElement>;
+
+  // =========================
+  // Gallery Images
+  // =========================
+  imagesList: TourImageItem[] = [];
 
   constructor(
     private fb: FormBuilder,
-    private tourService: TourService,
-    private toastr: ToastrService,
-    private router: Router
+    private tourService: TourService
   ) {
-    this.tourForm = this.fb.group({
+    this.tourForm = this.buildForm();
+  }
+
+  // =========================
+  // Form Builder
+  // =========================
+  private buildForm(): FormGroup {
+    return this.fb.group({
+      referenceName: ['', Validators.required],
       isActive: [true],
-      duration: ['', Validators.required],
-      price: ['', Validators.required],
+
+      fkCategoryId: [null, Validators.required],
+      fkDestinationId: [2, Validators.required],
+
+      duration: [0, Validators.required],
+      price: [0, Validators.required],
+
       startLocation: ['', Validators.required],
       endLocation: ['', Validators.required],
-      languageOptions: ['en,de,pl'],
-      referenceName: ['', Validators.required],
+      languageOptions: ['', Validators.required],
+
       linkVideo: [''],
-      fkCategoryId: [null, Validators.required],
 
-      translations: this.fb.array([]),
-      includesList: this.fb.array([]),
-      notIncludedList: this.fb.array([]),
-      highlightList: this.fb.array([]),
-      imagesList: this.fb.array([])
+      translations: this.fb.group({
+        en: this.createTranslationGroup(),
+        de: this.createTranslationGroup(),
+        nl: this.createTranslationGroup(),
+      }),
+
+      includes: this.fb.group({
+        en: this.fb.array([]),
+        de: this.fb.array([]),
+        nl: this.fb.array([]),
+      }),
+
+      notIncludes: this.fb.group({
+        en: this.fb.array([]),
+        de: this.fb.array([]),
+        nl: this.fb.array([]),
+      }),
+
+      highlights: this.fb.group({
+        en: this.fb.array([]),
+        de: this.fb.array([]),
+        nl: this.fb.array([]),
+      }),
     });
-
-    this.languages.forEach(lang => this.addTranslation(lang));
   }
 
-  // ===================== GETTERS =====================
-  get translations() { return this.tourForm.get('translations') as FormArray; }
-  get includesList() { return this.tourForm.get('includesList') as FormArray; }
-  get notIncludedList() { return this.tourForm.get('notIncludedList') as FormArray; }
-  get highlightList() { return this.tourForm.get('highlightList') as FormArray; }
-  get imagesList() { return this.tourForm.get('imagesList') as FormArray; }
-
-  // ===================== TRANSLATIONS =====================
-  addTranslation(lang: string) {
-    this.translations.push(this.fb.group({
-      language: [lang],
+  private createTranslationGroup(): FormGroup {
+    return this.fb.group({
       title: ['', Validators.required],
-      description: ['', Validators.required]
-    }));
+      description: ['', Validators.required],
+    });
   }
 
-  // ===================== INCLUDES =====================
-  addInclude(lang: string) {
-    this.includesList.push(this.fb.group({
-      language: [lang, Validators.required],
-      text: ['', Validators.required]
-    }));
+  // =========================
+  // Helpers
+  // =========================
+  getTranslationGroup(lang: string): FormGroup {
+    return this.tourForm.get(['translations', lang]) as FormGroup;
   }
-  removeInclude(i: number) { this.includesList.removeAt(i); }
+
+  getIncludes(lang: string): FormArray {
+    return this.tourForm.get(['includes', lang]) as FormArray;
+  }
+
+  getNotIncludes(lang: string): FormArray {
+    return this.tourForm.get(['notIncludes', lang]) as FormArray;
+  }
+
+  getHighlights(lang: string): FormArray {
+    return this.tourForm.get(['highlights', lang]) as FormArray;
+  }
+
+  // =========================
+  // Add / Remove
+  // =========================
+  addInclude(lang: string) {
+    this.getIncludes(lang).push(
+      this.fb.group({
+        text: ['', Validators.required],
+        Language: [lang]
+      })
+    );
+  }
+
+  removeInclude(lang: string, index: number) {
+    this.getIncludes(lang).removeAt(index);
+  }
 
   addNotInclude(lang: string) {
-    this.notIncludedList.push(this.fb.group({
-      language: [lang, Validators.required],
-      text: ['', Validators.required]
-    }));
+    this.getNotIncludes(lang).push(
+      this.fb.group({
+        text: ['', Validators.required],
+        Language: [lang]
+      })
+    );
   }
-  removeNotInclude(i: number) { this.notIncludedList.removeAt(i); }
+
+  removeNotInclude(lang: string, index: number) {
+    this.getNotIncludes(lang).removeAt(index);
+  }
 
   addHighlight(lang: string) {
-    this.highlightList.push(this.fb.group({
-      language: [lang, Validators.required],
-      text: ['', Validators.required]
-    }));
-  }
-  removeHighlight(i: number) { this.highlightList.removeAt(i); }
-
-  // ===================== IMAGES =====================
-  addImage() {
-    this.imagesList.push(this.fb.group({
-      imageFile: [null, Validators.required],
-      isActive: [true],
-      translations: this.fb.array(
-        this.languages.map(lang =>
-          this.fb.group({
-            language: [lang],
-            title: ['', Validators.required],
-            tourName: ['']
-          })
-        )
-      )
-    }));
+    this.getHighlights(lang).push(
+      this.fb.group({
+        text: ['', Validators.required],
+        Language: [lang]
+      })
+    );
   }
 
-  removeImage(i: number) {
-    this.imagesList.removeAt(i);
+  removeHighlight(lang: string, index: number) {
+    this.getHighlights(lang).removeAt(index);
   }
 
-  // ===================== MAIN IMAGE =====================
-  onFileSelected(event: any) {
-    const file = event.target.files[0];
-    if (!file) return;
+  // =========================
+  // Validation Helper
+  // =========================
+  private validateArrays(): boolean {
+    let isValid = true;
+    
+    this.languages.forEach(lang => {
+      const includes = this.getIncludes(lang).value;
+      const notIncludes = this.getNotIncludes(lang).value;
+      const highlights = this.getHighlights(lang).value;
+      
+      // تحقق من أن كل عنصر يحتوي على نص
+      [...includes, ...notIncludes, ...highlights].forEach((item: any) => {
+        if (item && !item.text?.trim()) {
+          isValid = false;
+        }
+      });
+    });
+    
+    return isValid;
+  }
 
-    this.selectedFile = file;
+  // =========================
+  // Main Image
+  // =========================
+  onMainImageSelected(event: any) {
+    if (!event.target.files?.length) return;
+
+    this.selectedMainImage = event.target.files[0];
     const reader = new FileReader();
-    reader.onload = () => this.imagePreview = reader.result;
-    reader.readAsDataURL(file);
+    reader.onload = () => (this.mainImagePreview = reader.result);
+    if (this.selectedMainImage) {
+      reader.readAsDataURL(this.selectedMainImage);
+    }
   }
 
   removeMainImage() {
-    this.selectedFile = null;
-    this.imagePreview = null;
-    this.fileInput.nativeElement.value = '';
+    this.selectedMainImage = null;
+    this.mainImagePreview = null;
+    this.mainImageInput.nativeElement.value = '';
   }
 
-  // ===================== SUBMIT =====================
+  // =========================
+  // Gallery Images
+  // =========================
+  addGalleryImage() {
+    this.imagesList.push({
+      file: null,
+      preview: null,
+      isActive: true,
+      translations: this.languages.map(lang => ({
+        lang,
+        title: '',
+        tourName: ''
+      }))
+    });
+  }
+
+  onGalleryImageSelected(event: any, index: number) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagesList[index].file = file;
+      this.imagesList[index].preview = reader.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  removeGalleryImage(index: number) {
+    this.imagesList.splice(index, 1);
+  }
+
+  // =========================
+  // Error Summary
+  // =========================
+  buildErrorSummary() {
+    this.formErrors = [];
+
+    this.checkControl('referenceName', 'Reference Name');
+    this.checkControl('fkCategoryId', 'Category');
+    this.checkControl('fkDestinationId', 'Destination');
+    this.checkControl('duration', 'Duration');
+    this.checkControl('price', 'Price');
+    this.checkControl('startLocation', 'Start Location');
+    this.checkControl('endLocation', 'End Location');
+    this.checkControl('languageOptions', 'Language Options');
+
+    this.languages.forEach(lang => {
+      const group = this.getTranslationGroup(lang);
+      if (group.get('title')?.invalid)
+        this.formErrors.push({ label: 'Title', lang });
+      if (group.get('description')?.invalid)
+        this.formErrors.push({ label: 'Description', lang });
+    });
+  }
+
+  private checkControl(controlName: string, label: string) {
+    const control = this.tourForm.get(controlName);
+    if (control && control.invalid && control.touched)
+      this.formErrors.push({ label });
+  }
+
+  // =========================
+  // Data Collection
+  // =========================
+  private collectText(key: 'includes' | 'notIncludes' | 'highlights'): any[] {
+    const result: any[] = [];
+    this.languages.forEach(lang => {
+      const array = this.tourForm.get([key, lang])?.value;
+      if (array && Array.isArray(array)) {
+        array.forEach((item: any) => {
+          if (item && item.text) {
+            result.push({ Text: item.text, Language: item.Language || lang });
+          }
+        });
+      }
+    });
+    return result;
+  }
+
+  // =========================
+  // Submit
+  // =========================
   onSubmit() {
-    if (this.tourForm.invalid) {
-      this.toastr.error('Please fill all required fields');
+    this.tourForm.markAllAsTouched();
+    this.buildErrorSummary();
+
+    if (this.tourForm.invalid || !this.validateArrays()) {
+      this.toaster.error('Please complete all required fields correctly', 'Validation Error');
       return;
     }
 
     const formData = new FormData();
 
-    formData.append('IsActive', this.tourForm.value.isActive);
-    formData.append('Duration', this.tourForm.value.duration);
-    formData.append('Price', this.tourForm.value.price);
-    formData.append('StartLocation', this.tourForm.value.startLocation);
-    formData.append('EndLocation', this.tourForm.value.endLocation);
-    formData.append('LanguageOptions', this.tourForm.value.languageOptions);
-    formData.append('ReferneceName', this.tourForm.value.referenceName);
-    formData.append('LinkVideo', this.tourForm.value.linkVideo || '');
-    formData.append('FK_CategoryID', this.tourForm.value.fkCategoryId);
-    formData.append('FK_DestinationID', '2');
+    const v = this.tourForm.value;
 
-    if (this.selectedFile) {
-      formData.append('ImageFile', this.selectedFile);
+    formData.append('ReferneceName', v.referenceName);
+    formData.append('IsActive', v.isActive);
+    formData.append('FK_CategoryID', v.fkCategoryId);
+    formData.append('FK_DestinationID', v.fkDestinationId);
+
+    formData.append('Duration', v.duration);
+    formData.append('Price', v.price);
+    formData.append('StartLocation', v.startLocation);
+    formData.append('EndLocation', v.endLocation);
+    formData.append('LanguageOptions', v.languageOptions);
+    formData.append('LinkVideo', v.linkVideo || '');
+
+    // =========================
+    // Translations
+    // =========================
+    const translations = this.languages.map(lang => ({
+      Language: lang,
+      Title: this.getTranslationGroup(lang).value.title,
+      Description: this.getTranslationGroup(lang).value.description
+    }));
+    formData.append('TranslationsJson', JSON.stringify(translations));
+
+    // =========================
+    // Includes, Not Includes, Highlights
+    // =========================
+    formData.append('IncludesJson', JSON.stringify(this.collectText('includes')));
+    formData.append('NonIncludesJson', JSON.stringify(this.collectText('notIncludes')));
+    formData.append('hightlightJson', JSON.stringify(this.collectText('highlights')));
+
+    // =========================
+    // Main Image
+    // =========================
+    if (this.selectedMainImage) {
+      formData.append('ImageFile', this.selectedMainImage);
     }
 
-    formData.append('TranslationsJson', JSON.stringify(this.translations.value));
-    formData.append('IncludesJson', JSON.stringify(this.includesList.value));
-    formData.append('NonIncludesJson', JSON.stringify(this.notIncludedList.value));
-    formData.append('hightlightJson', JSON.stringify(this.highlightList.value));
+    // =========================
+    // Gallery Images
+    // =========================
+    this.imagesList.forEach((img, i) => {
+      if (!img.file) return;
 
-    this.imagesList.controls.forEach((img, i) => {
-      formData.append(`ImagesList[${i}].ImageFile`, img.value.imageFile);
-      formData.append(`ImagesList[${i}].IsActive`, img.value.isActive);
-      formData.append(`ImagesList[${i}].TranslationsJson`,
-        JSON.stringify(img.value.translations));
+      formData.append(`ImagesList[${i}].ImageFile`, img.file);
+      formData.append(`ImagesList[${i}].IsActive`, String(img.isActive));
+
+      const imgTranslations = img.translations.map(t => ({
+        Language: t.lang,
+        Title: t.title,
+        TourName: t.tourName
+      }));
+
+      formData.append(
+        `ImagesList[${i}].TranslationsJson`,
+        JSON.stringify(imgTranslations)
+      );
     });
 
     this.tourService.createTour(formData).subscribe({
       next: () => {
-        this.toastr.success('Tour created successfully');
+        this.toaster.success('Tour created successfully', 'Success');
         this.router.navigate(['/admin/tours']);
       },
-      error: () => this.toastr.error('Error creating tour')
+      error: (error) => {
+        console.error('Error creating tour:', error);
+        this.toaster.error('Error creating tour. Please try again.', 'Error');
+      }
     });
   }
-
-
-  onImageChange(event: Event, index: number) {
-  const file = (event.target as HTMLInputElement).files?.[0];
-  if (!file) return;
-
-  const imgGroup = this.tourImages.at(index) as FormGroup;
-  imgGroup.get('imageFile')?.setValue(file);
-}
-  get tourImages() {
-    return this.tourForm.get('imagesList') as FormArray;
-  }
-
-  getImageTranslations(img: AbstractControl): FormArray {
-    return img.get('translations') as FormArray;
-  }
-
-  
 }

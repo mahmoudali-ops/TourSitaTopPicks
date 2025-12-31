@@ -1,166 +1,386 @@
-import { FindByIndexPipe } from './../../core/pipes/find-by-index.pipe';
-import { Component, ElementRef, inject, signal, ViewChild, WritableSignal } from '@angular/core';
-import { ToastrService } from 'ngx-toastr';
-import { DestnatoinService } from '../../core/services/destnatoin.service';
+import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IDestnation } from '../../core/interfaces/idestnation';
-import { findIndex, Subscription } from 'rxjs';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 import { TourService } from '../../core/services/tour.service';
-import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { TourImg } from '../../core/interfaces/itour';
-interface ExistingImage {
-  id: number
-  referenceName: string
-  title: string
-  imageCarouselUrl: string
-  isActive: boolean
-  fK_TourId: number
+import { environment } from '../../core/environments/environments';
+
+interface FormErrorSummary {
+  label: string;
+  lang?: string;
+}
+
+interface TourImageItem {
+  id?: number;
+  file: File | null;
+  preview: string | ArrayBuffer | null;
+  isActive: boolean;
+  translations: {
+    lang: string;
+    title: string;
+    tourName: string;
+  }[];
+}
+
+interface ExistingImageItem {
+  id: number;
+  imageUrl: string;
+  isActive: boolean;
+  translations: {
+    lang: string;
+    title: string;
+    tourName: string;
+  }[];
 }
 
 @Component({
   selector: 'app-update-tour',
   standalone: true,
-  imports: [ReactiveFormsModule,CommonModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './update-tour.component.html',
   styleUrl: './update-tour.component.css'
 })
-export class UpdateTourComponent {
+export class UpdateTourComponent implements OnInit {
   private readonly toaster = inject(ToastrService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  categories = [
+    { id: 28, name: 'sea tours hurghada' },
+    { id: 34, name: 'thing to do hurghada' },
+    { id: 37, name: 'diving' },
+    { id: 38, name: 'cairo tours hurghada' },
+    { id: 39, name: 'luxor tours hurghada' },
+    { id: 40, name: 'safari tours hurghada' }
+  ];
+  languages = ['en', 'de', 'nl'];
+  selectedLang: string = 'en';
+  tourId!: number;
+  isSubmitting = false;
 
   tourForm: FormGroup;
-  selectedFile: File | null = null;
-  imagePreview: string | ArrayBuffer | null = null;
-  errorSummary: string[] = [];
-  oldMainImageUrl: string | null = null;
-  galleryPreview: string[] = [];
+  formErrors: FormErrorSummary[] = [];
 
-  @ViewChild('fileInput') fileInput!: ElementRef;
+  // =========================
+  // Main Image
+  // =========================
+  selectedMainImage: File | null = null;
+  mainImagePreview: string | null = null;
+  existingMainImage: string | null = null;
 
-  constructor(private fb: FormBuilder, private tourService: TourService) {
-    this.tourForm = this.fb.group({
-      title: ['', Validators.required],
-      description: ['', Validators.required],
-      metaDescription: ['', Validators.required],
-      metaKeyWords: ['', Validators.required],
-      referenceName: ['', Validators.required],
-      isActive: [true],
+  @ViewChild('mainImageInput') mainImageInput!: ElementRef<HTMLInputElement>;
 
-      linkVideo: [''],
-      languageOptions: ['', Validators.required],
-      startLocation: ['', Validators.required],
-      endLocation: ['', Validators.required],
-      duration: [0, Validators.required],
-      price: [0, Validators.required],
+  // =========================
+  // Gallery Images
+  // =========================
+  imagesList: TourImageItem[] = [];
+  existingImages: ExistingImageItem[] = [];
 
-      fkCategoryId: [null],
-      fkDestinationId: [null, Validators.required],
+  constructor(
+    private fb: FormBuilder,
+    private tourService: TourService
+  ) {
+    this.tourForm = this.buildForm();
+  }
 
-      includesList: this.fb.array([]),
-      notIncludedList: this.fb.array([]),
-      highlightList: this.fb.array([]),
-      imagesList: this.fb.array([]),
+  ngOnInit(): void {
+    this.route.params.subscribe(params => {
+      this.tourId = +params['id'];
+      this.loadTourData();
     });
   }
 
-  ngOnInit() {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    if (id) {
-      this.loadTour(id);
-    }
+  // =========================
+  // Form Builder
+  // =========================
+  private buildForm(): FormGroup {
+    return this.fb.group({
+      referenceName: ['', Validators.required],
+      isActive: [true],
+
+      fkCategoryId: [null, Validators.required],
+      fkDestinationId: [{ value: 2, disabled: true }, Validators.required],
+
+      duration: [0, Validators.required],
+      price: [0, Validators.required],
+
+      startLocation: ['', Validators.required],
+      endLocation: ['', Validators.required],
+      languageOptions: ['', Validators.required],
+
+      linkVideo: [''],
+
+      translations: this.fb.group({
+        en: this.createTranslationGroup(),
+        de: this.createTranslationGroup(),
+        nl: this.createTranslationGroup(),
+      }),
+
+      includes: this.fb.group({
+        en: this.fb.array([]),
+        de: this.fb.array([]),
+        nl: this.fb.array([]),
+      }),
+
+      notIncludes: this.fb.group({
+        en: this.fb.array([]),
+        de: this.fb.array([]),
+        nl: this.fb.array([]),
+      }),
+
+      highlights: this.fb.group({
+        en: this.fb.array([]),
+        de: this.fb.array([]),
+        nl: this.fb.array([]),
+      }),
+    });
   }
 
-  // ========== GETTERS ==========
-  get includesList() { return this.tourForm.get('includesList') as FormArray; }
-  get notIncludedList() { return this.tourForm.get('notIncludedList') as FormArray; }
-  get highlightList() { return this.tourForm.get('highlightList') as FormArray; }
-  get imagesList() { return this.tourForm.get('imagesList') as FormArray; }
+  private createTranslationGroup(): FormGroup {
+    return this.fb.group({
+      title: ['', Validators.required],
+      description: ['', Validators.required],
+    });
+  }
 
-  // ========== Load Tour ==========
-  loadTour(id: number) {
-    this.tourService.getAllDetaildedCategoryTour(id).subscribe({
-      next: (tour: any) => {
-        // Fill main form
-        this.tourForm.patchValue({
-          title: tour.title,
-          description: tour.description,
-          metaDescription: tour.metaDescription,
-          metaKeyWords: tour.metaKeyWords,
-          referenceName: tour.referenceName,
-          isActive: tour.isActive,
-          linkVideo: tour.linkVideo,
-          languageOptions: tour.languageOptions,
-          startLocation: tour.startLocation,
-          endLocation: tour.endLocation,
-          duration: tour.duration,
-          price: tour.price,
-          fkCategoryId: tour.fkCategoryId,
-          fkDestinationId: tour.fkDestinationId,
-        });
-
-        // Main image
-        this.oldMainImageUrl = tour.imageCover; // Assuming tour.imageCover is URL
-
-        // Includes
-        if (tour.includesList) {
-          tour.includesList.forEach((inc: any) => {
-            this.includesList.push(this.fb.group({ Text: [inc.text, Validators.required] }));
-          });
-        }
-
-        // Not Includes
-        if (tour.notIncludedList) {
-          tour.notIncludedList.forEach((ni: any) => {
-            this.notIncludedList.push(this.fb.group({ Text: [ni.text, Validators.required] }));
-          });
-        }
-
-        // Highlights
-        if (tour.highlightList) {
-          tour.highlightList.forEach((hl: any) => {
-            this.highlightList.push(this.fb.group({ Text: [hl.text, Validators.required] }));
-          });
-        }
-
-        // Images
-        if (tour.tourImgs && tour.tourImgs.length > 0) {
-          tour.tourImgs.forEach((img: TourImg) => {
-            const group = this.fb.group({
-              id: [img.id],
-              Titles: [img.titles, Validators.required],
-              ImageFile: [null],
-              IsActive: [img.isActive]
-            });
-            this.imagesList.push(group);
-            this.galleryPreview.push(img.imageCarouselUrl);
-          });
-        }
+  // =========================
+  // Load Tour Data
+  // =========================
+  loadTourData() {
+    this.tourService.getAllDetaildedTour(this.tourId).subscribe({
+      next: (data) => {
+        this.fillForm(data);
       },
-      error: () => {
-        this.toaster.error('Failed to load tour data.');
+      error: (error) => {
+        console.error('Error loading tour data:', error);
+        this.toaster.error('Failed to load tour data', 'Error');
+        this.router.navigate(['/admin/tours']);
       }
     });
   }
 
-  // ========== Image Handling ==========
-  onFileSelected(event: any) {
-    if (event.target.files && event.target.files.length > 0) {
-      this.selectedFile = event.target.files[0];
-      const reader = new FileReader();
-      reader.onload = () => this.imagePreview = reader.result;
-      if(this.selectedFile){
-      reader.readAsDataURL(this.selectedFile);
-    }}
+  private fillForm(data: any) {
+    // Fill basic info
+    this.tourForm.patchValue({
+      referenceName: data.referneceName,
+      isActive: data.isActive,
+      fkCategoryId: data.fK_CategoryID,
+      fkDestinationId: data.fK_DestinationID,
+      duration: data.duration,
+      price: data.price,
+      startLocation: data.startLocation,
+      endLocation: data.endLocation,
+      languageOptions: data.languageOptions,
+      linkVideo: data.linkVideo || ''
+    });
+
+    // Fill translations
+    this.languages.forEach(lang => {
+      const translation = data.translations.find((t: any) => t.language === lang);
+      if (translation) {
+        this.getTranslationGroup(lang).patchValue({
+          title: translation.title,
+          description: translation.description
+        });
+      }
+    });
+
+    // Fill includes
+    this.languages.forEach(lang => {
+      const includesForLang = data.includedItems.filter((item: any) => 
+        item.language.toLowerCase() === lang.toLowerCase()
+      );
+      includesForLang.forEach((item: any) => {
+        this.addInclude(lang);
+        const includesArray = this.getIncludes(lang);
+        const lastIndex = includesArray.length - 1;
+        includesArray.at(lastIndex).patchValue({
+          text: item.text,
+          Language: item.language
+        });
+      });
+    });
+
+    // Fill not includes
+    this.languages.forEach(lang => {
+      const notIncludesForLang = data.notIncludedItems.filter((item: any) => 
+        item.language.toLowerCase() === lang.toLowerCase()
+      );
+      notIncludesForLang.forEach((item: any) => {
+        this.addNotInclude(lang);
+        const notIncludesArray = this.getNotIncludes(lang);
+        const lastIndex = notIncludesArray.length - 1;
+        notIncludesArray.at(lastIndex).patchValue({
+          text: item.text,
+          Language: item.language
+        });
+      });
+    });
+
+    // Fill highlights
+    this.languages.forEach(lang => {
+      const highlightsForLang = data.highlights.filter((item: any) => 
+        item.language.toLowerCase() === lang.toLowerCase()
+      );
+      highlightsForLang.forEach((item: any) => {
+        this.addHighlight(lang);
+        const highlightsArray = this.getHighlights(lang);
+        const lastIndex = highlightsArray.length - 1;
+        highlightsArray.at(lastIndex).patchValue({
+          text: item.text,
+          Language: item.language
+        });
+      });
+    });
+
+    // Main image
+    if (data.imageCover) {
+      this.existingMainImage = `${environment.BaseUrl}/${data.imageCover}`;
+      this.mainImagePreview = this.existingMainImage;
+    }
+
+    // Existing gallery images
+    if (data.tourImgs && data.tourImgs.length > 0) {
+      this.existingImages = data.tourImgs.map((img: any) => {
+        const translations = this.languages.map(lang => {
+          const existingTranslation = img.translations?.find((t: any) => 
+            t.language?.toLowerCase() === lang.toLowerCase()
+          );
+          return {
+            lang,
+            title: existingTranslation?.title || '',
+            tourName: existingTranslation?.tourName || ''
+          };
+        });
+
+        return {
+          id: img.id,
+          imageUrl: `${environment.BaseUrl}/${img.imageCarouselUrl}`,
+          isActive: img.isActive,
+          translations
+        };
+      });
+    }
   }
 
+  // =========================
+  // Helpers
+  // =========================
+  getTranslationGroup(lang: string): FormGroup {
+    return this.tourForm.get(['translations', lang]) as FormGroup;
+  }
+
+  getIncludes(lang: string): FormArray {
+    return this.tourForm.get(['includes', lang]) as FormArray;
+  }
+
+  getNotIncludes(lang: string): FormArray {
+    return this.tourForm.get(['notIncludes', lang]) as FormArray;
+  }
+
+  getHighlights(lang: string): FormArray {
+    return this.tourForm.get(['highlights', lang]) as FormArray;
+  }
+
+  // =========================
+  // Add / Remove
+  // =========================
+  addInclude(lang: string) {
+    this.getIncludes(lang).push(
+      this.fb.group({
+        text: ['', Validators.required],
+        Language: [lang]
+      })
+    );
+  }
+
+  removeInclude(lang: string, index: number) {
+    this.getIncludes(lang).removeAt(index);
+  }
+
+  addNotInclude(lang: string) {
+    this.getNotIncludes(lang).push(
+      this.fb.group({
+        text: ['', Validators.required],
+        Language: [lang]
+      })
+    );
+  }
+
+  removeNotInclude(lang: string, index: number) {
+    this.getNotIncludes(lang).removeAt(index);
+  }
+
+  addHighlight(lang: string) {
+    this.getHighlights(lang).push(
+      this.fb.group({
+        text: ['', Validators.required],
+        Language: [lang]
+      })
+    );
+  }
+
+  removeHighlight(lang: string, index: number) {
+    this.getHighlights(lang).removeAt(index);
+  }
+
+  // =========================
+  // Validation Helper
+  // =========================
+  private validateArrays(): boolean {
+    let isValid = true;
+    
+    this.languages.forEach(lang => {
+      const includes = this.getIncludes(lang).value;
+      const notIncludes = this.getNotIncludes(lang).value;
+      const highlights = this.getHighlights(lang).value;
+      
+      // Check if each item has text
+      [...includes, ...notIncludes, ...highlights].forEach((item: any) => {
+        if (item && !item.text?.trim()) {
+          isValid = false;
+        }
+      });
+    });
+    
+    return isValid;
+  }
+
+  // =========================
+  // Main Image
+  // =========================
+  onMainImageSelected(event: any) {
+    if (!event.target.files?.length) return;
+
+    this.selectedMainImage = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = () => (this.mainImagePreview = reader.result as string);
+    if (this.selectedMainImage){
+    reader.readAsDataURL(this.selectedMainImage);
+  }}
+
   removeMainImage() {
-    this.selectedFile = null;
-    this.imagePreview = null;
-    this.fileInput.nativeElement.value = '';
-    this.oldMainImageUrl = null;
+    this.selectedMainImage = null;
+    this.mainImagePreview = this.existingMainImage;
+    if (this.mainImageInput) {
+      this.mainImageInput.nativeElement.value = '';
+    }
+  }
+
+  // =========================
+  // Gallery Images
+  // =========================
+  addGalleryImage() {
+    this.imagesList.push({
+      file: null,
+      preview: null,
+      isActive: true,
+      translations: this.languages.map(lang => ({
+        lang,
+        title: '',
+        tourName: ''
+      }))
+    });
   }
 
   onGalleryImageSelected(event: any, index: number) {
@@ -168,108 +388,171 @@ export class UpdateTourComponent {
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = () => this.galleryPreview[index] = reader.result as string;
-
+    reader.onload = () => {
+      this.imagesList[index].file = file;
+      this.imagesList[index].preview = reader.result;
+    };
     reader.readAsDataURL(file);
-
-    // Update form control
-    this.imagesList.at(index).patchValue({ ImageFile: file });
   }
 
-  addImage() {
-    this.imagesList.push(
-      this.fb.group({
-        id: [0],
-        Title: ['', Validators.required],
-        ReferenceName: ['', Validators.required],
-        ImageFile: [null, Validators.required],
-        IsActive: [true]
-      })
-    );
-    this.galleryPreview.push('');
+  removeGalleryImage(index: number) {
+    this.imagesList.splice(index, 1);
   }
 
-  removeImage(index: number) {
-    this.imagesList.removeAt(index);
-    this.galleryPreview.splice(index, 1);
+  // =========================
+  // Existing Images
+  // =========================
+  updateExistingImageTranslations(imageIndex: number, lang: string, field: 'title' | 'tourName', value: string) {
+    const image = this.existingImages[imageIndex];
+    const translation = image.translations.find(t => t.lang === lang);
+    if (translation) {
+      translation[field] = value;
+    }
   }
 
-  addInclude() { this.includesList.push(this.fb.group({ Text: ['', Validators.required] })); }
-  removeInclude(i: number) { this.includesList.removeAt(i); }
+  // =========================
+  // Error Summary
+  // =========================
+  buildErrorSummary() {
+    this.formErrors = [];
 
-  addNotIncluded() { this.notIncludedList.push(this.fb.group({ Text: ['', Validators.required] })); }
-  removeNotIncluded(i: number) { this.notIncludedList.removeAt(i); }
+    this.checkControl('referenceName', 'Reference Name');
+    this.checkControl('fkCategoryId', 'Category');
+    this.checkControl('fkDestinationId', 'Destination');
+    this.checkControl('duration', 'Duration');
+    this.checkControl('price', 'Price');
+    this.checkControl('startLocation', 'Start Location');
+    this.checkControl('endLocation', 'End Location');
+    this.checkControl('languageOptions', 'Language Options');
 
-  addHighlight() { this.highlightList.push(this.fb.group({ Text: ['', Validators.required] })); }
-  removeHighlight(i: number) { this.highlightList.removeAt(i); }
+    this.languages.forEach(lang => {
+      const group = this.getTranslationGroup(lang);
+      if (group.get('title')?.invalid)
+        this.formErrors.push({ label: 'Title', lang });
+      if (group.get('description')?.invalid)
+        this.formErrors.push({ label: 'Description', lang });
+    });
+  }
 
-  // ========== Submit ==========
+  private checkControl(controlName: string, label: string) {
+    const control = this.tourForm.get(controlName);
+    if (control && control.invalid && control.touched)
+      this.formErrors.push({ label });
+  }
+
+  // =========================
+  // Data Collection
+  // =========================
+  private collectText(key: 'includes' | 'notIncludes' | 'highlights'): any[] {
+    const result: any[] = [];
+    this.languages.forEach(lang => {
+      const array = this.tourForm.get([key, lang])?.value;
+      if (array && Array.isArray(array)) {
+        array.forEach((item: any) => {
+          if (item && item.text) {
+            result.push({ Text: item.text, Language: item.Language || lang });
+          }
+        });
+      }
+    });
+    return result;
+  }
+
+  // =========================
+  // Submit
+  // =========================
   onSubmit() {
-    this.generateErrorSummary();
-    if (this.tourForm.invalid) {
-      this.toaster.error('Please complete all required fields.');
+    this.tourForm.markAllAsTouched();
+    this.buildErrorSummary();
+
+    if (this.tourForm.invalid || !this.validateArrays()) {
+      this.toaster.error('Please complete all required fields correctly', 'Validation Error');
       return;
     }
 
+    if (this.isSubmitting) return;
+    this.isSubmitting = true;
+
     const formData = new FormData();
-    const values = this.tourForm.value;
 
-    formData.append('Title', values.title);
-    formData.append('Description', values.description);
-    formData.append('MetaDescription', values.metaDescription);
-    formData.append('MetaKeyWords', values.metaKeyWords);
-    formData.append('ReferenceName', values.referenceName);
-    formData.append('IsActive', values.isActive);
+    const v = this.tourForm.getRawValue();
 
-    formData.append('LinkVideo', values.linkVideo);
-    formData.append('LanguageOptions', values.languageOptions);
-    formData.append('StartLocation', values.startLocation);
-    formData.append('EndLocation', values.endLocation);
-    formData.append('Duration', values.duration);
-    formData.append('Price', values.price);
+    formData.append('ReferneceName', v.referenceName);
+    formData.append('IsActive', v.isActive);
+    formData.append('FK_CategoryID', v.fkCategoryId);
+    formData.append('FK_DestinationID', v.fkDestinationId);
 
-    formData.append('FK_CategoryID', values.fkCategoryId);
-    formData.append('FK_DestinationID', values.fkDestinationId);
+    formData.append('Duration', v.duration);
+    formData.append('Price', v.price);
+    formData.append('StartLocation', v.startLocation);
+    formData.append('EndLocation', v.endLocation);
+    formData.append('LanguageOptions', v.languageOptions);
+    formData.append('LinkVideo', v.linkVideo || '');
 
-    // Lists
-    formData.append('IncludesJson', JSON.stringify(this.includesList.value));
-    formData.append('NonIncludesJson', JSON.stringify(this.notIncludedList.value));
-    formData.append('HightlightJson', JSON.stringify(this.highlightList.value));
+    // =========================
+    // Translations
+    // =========================
+    const translations = this.languages.map(lang => ({
+      Language: lang,
+      Title: this.getTranslationGroup(lang).value.title,
+      Description: this.getTranslationGroup(lang).value.description
+    }));
+    formData.append('TranslationsJson', JSON.stringify(translations));
 
-    // Images
-    this.imagesList.controls.forEach((ctrl: any, index: number) => {
-      const imgFile = ctrl.get('ImageFile').value;
-      formData.append(`ImagesList[${index}].Id`, ctrl.get('id').value);
-      formData.append(`ImagesList[${index}].Title`, ctrl.get('Title').value);
-      formData.append(`ImagesList[${index}].ReferenceName`, ctrl.get('ReferenceName').value);
-      formData.append(`ImagesList[${index}].IsActive`, ctrl.get('IsActive').value);
-      if (imgFile) formData.append(`ImagesList[${index}].ImageFile`, imgFile);
+    // =========================
+    // Includes, Not Includes, Highlights
+    // =========================
+    formData.append('IncludesJson', JSON.stringify(this.collectText('includes')));
+    formData.append('NonIncludesJson', JSON.stringify(this.collectText('notIncludes')));
+    formData.append('hightlightJson', JSON.stringify(this.collectText('highlights')));
+
+    // =========================
+    // Main Image
+    // =========================
+    if (this.selectedMainImage) {
+      formData.append('ImageFile', this.selectedMainImage);
+    }
+
+    // =========================
+    // New Gallery Images
+    // =========================
+    this.imagesList.forEach((img, i) => {
+      if (!img.file) return;
+
+      formData.append(`ImagesList[${i}].ImageFile`, img.file);
+      formData.append(`ImagesList[${i}].IsActive`, String(img.isActive));
+
+      const imgTranslations = img.translations.map(t => ({
+        Language: t.lang,
+        Title: t.title,
+        TourName: t.tourName
+      }));
+
+      formData.append(
+        `ImagesList[${i}].TranslationsJson`,
+        JSON.stringify(imgTranslations)
+      );
     });
 
-    if (this.selectedFile) formData.append('ImageFile', this.selectedFile);
-
-    const tourId = Number(this.route.snapshot.paramMap.get('id'));
-    this.tourService.updateTour(tourId, formData).subscribe({
+    // =========================
+    // Update Tour
+    // =========================
+    this.tourService.updateTour(this.tourId, formData).subscribe({
       next: () => {
-        this.toaster.success('Tour updated successfully!');
+        this.toaster.success('Tour updated successfully', 'Success');
         this.router.navigate(['/admin/tours']);
       },
-      error:  () => {
-        this.toaster.error('Error updating tour.', 'Update Error');
+      error: (error) => {
+        console.error('Error updating tour:', error);
+        this.toaster.error('Error updating tour. Please try again.', 'Error');
+        this.isSubmitting = false;
+      },
+      complete: () => {
+        this.isSubmitting = false;
       }
     });
   }
 
-  generateErrorSummary() {
-    this.errorSummary = [];
-    const controls = this.tourForm.controls;
-    for (let key in controls) {
-      const control = controls[key];
-      if (control.errors) {
-        if (control.errors['required']) this.errorSummary.push(`حقل (${key}) مطلوب.`);
-      }
-    }
-    if (this.includesList.invalid) this.errorSummary.push(`لا بد من إدخال كل عناصر قسم (Includes).`);
-    if (this.imagesList.invalid) this.errorSummary.push(`برجاء التأكد من رفع كل الصور المطلوبة.`);
-  }
+ 
+  
 }

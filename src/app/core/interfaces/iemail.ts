@@ -8,7 +8,7 @@ export interface IEmail {
     fK_TourId: number
     fullTourName: string
     childernNumber:number
-    adultsNumber:number
+    adultNumber:number
     hotelName:string
     roomNumber:number
   }

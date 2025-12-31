@@ -5,11 +5,17 @@ import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 export const authInterceptorInterceptor: HttpInterceptorFn = (req, next) => {
-  const router = inject(Router); // inject Router بدل window
+  const router = inject(Router);
+
+  // 👈 لو request طالب skip
+  if (req.headers.has('X-Skip-Auth')) {
+    return next(req);
+  }
+
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       if (error.status === 401) {
-        router.navigate(['/admin/login']); // redirect بطريقة آمنة للـ SSR
+        router.navigate(['/admin/login']);
       }
       return throwError(() => error);
     })

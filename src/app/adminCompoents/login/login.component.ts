@@ -4,13 +4,15 @@ import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { switchMap, delay } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
   standalone:true,
-  imports: [ReactiveFormsModule, CommonModule, NgClass, RouterLink]
+  imports: [ReactiveFormsModule, CommonModule, NgClass]
 })
 export class LoginComponent implements OnInit {
 
@@ -18,7 +20,7 @@ export class LoginComponent implements OnInit {
   submitted = false;
   IsSccuess = false;
   serverError: string = '';
-  returnUrl: string = '/admin/dashboard';
+  returnUrl: string = '/admin/tours';
 
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
@@ -36,32 +38,33 @@ export class LoginComponent implements OnInit {
     this.returnUrl = this._route.snapshot.queryParams['returnUrl'] || '/admin/tours';
   }
 
-  onSubmit(): void {
-    this.submitted = true;
-    this.serverError = '';
+// login.component.ts
+onSubmit(): void {
+  this.submitted = true;
+  this.serverError = '';
 
-    if (this.loginForm.invalid) {
-      this.loginForm.markAllAsTouched();
-      return;
-    }
-
-    const loginData = this.loginForm.value;
-
-    this.authService.Login(loginData).subscribe({
-      next: (res: any) => {
-        this.IsSccuess = true;
-
-        // اظهار alert للنجاح
-        this.toasterService.success('Login valid!', 'Success');
-
-        setTimeout(() => {
-          // redirect بعد نجاح login حسب returnUrl
-          this._router.navigateByUrl(this.returnUrl);
-        }, 500);
-      },
-      error: (err) => {
-        this.toasterService.error('Invalid email or password', 'Login Failed');
-      }
-    });
+  if (this.loginForm.invalid) {
+    this.loginForm.markAllAsTouched();
+    return;
   }
+
+  const loginData = this.loginForm.value;
+
+  this.authService.Login(loginData).subscribe({
+    next: (res: any) => {
+      this.IsSccuess = true;
+      this.toasterService.success('Login valid!', 'Success');
+
+      // حفظ حالة login في localStorage/sessionStorage
+      localStorage.setItem('isLoggedIn', 'true');
+
+      // redirect مباشرة بدون checkAuth
+      this._router.navigateByUrl(this.returnUrl);
+    },
+    error: (err) => {
+      this.toasterService.error('Invalid email or password', 'Login Failed');
+    }
+  });
+}
+
 }

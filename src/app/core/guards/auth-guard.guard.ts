@@ -9,11 +9,16 @@ export const authGuardGuard: CanActivateFn = (route: ActivatedRouteSnapshot, sta
 
   return authService.checkAuth().pipe(
     map(isAuth => {
-      if (isAuth) return true;
+      if (isAuth) {
+        return true;
+      }
 
-      // إذا غير مسجل الدخول، احتفظ بالـ returnUrl للـ login
-      router.navigate(['/admin/login'], { queryParams: { returnUrl: state.url } });
+      // ❌ غير مسجل دخول → رجعه للـ login
+      router.navigate(['/admin/login'], {
+        queryParams: { returnUrl: state.url }
+      });
       return false;
     })
   );
 };
+

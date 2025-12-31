@@ -19,8 +19,11 @@ export class AdminNavComponent {
   onLogout() {
     this.authService.LogOut().subscribe({
       next: () => {
-        this.router.navigate(['/admin/login']);
-        this.toasterService.success("Loged Out successfully","Logging OuT")
+        this.toasterService.success('Logged out successfully');
+        this.router.navigate(['/admin/login']); // redirect لصفحة login
+      },
+      error: () => {
+        this.toasterService.error('Logout failed');
       }
     });
 }}
