@@ -7,6 +7,8 @@ export interface Itransfer {
   names: string
   descriptions: string
   slug: string
+  metaKeyWords:string
+  metaDescription:string
 }
 
 export interface ItransferWithPrices {
@@ -17,6 +19,8 @@ export interface ItransferWithPrices {
   destinationName: string
   names: string
   descriptions: string
+  metaKeyWords:string
+  metaDescription:string
   referneceName: string
   slug: string
   pricesList: PricesList[]

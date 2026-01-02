@@ -57,7 +57,7 @@ export class CreateTransferComponent {
     return this.fb.group({
       referenceName: ['', Validators.required],
       isActive: [true],
-      fkDestinationId: [null, Validators.required],
+      fkDestinationId: [2, Validators.required],
 
       translations: this.fb.group({
         en: this.createTranslationGroup(),
@@ -94,7 +94,9 @@ export class CreateTransferComponent {
   private createTranslationGroup(): FormGroup {
     return this.fb.group({
       name: ['', Validators.required],
-      description: ['', Validators.required]
+      description: ['', Validators.required],
+      metaDescription: [''],
+      metaKeyWords: ['']
     });
   }
 
@@ -208,6 +210,8 @@ export class CreateTransferComponent {
       const group = this.getTranslationGroup(lang);
       if (group.get('name')?.invalid) this.formErrors.push({ label: 'Title', lang });
       if (group.get('description')?.invalid) this.formErrors.push({ label: 'Description', lang });
+      if (group.get('metaDescription')?.invalid) this.formErrors.push({ label: 'Meta Description', lang });
+      if (group.get('metaKeyWords')?.invalid) this.formErrors.push({ label: 'Meta Keywords', lang });
     });
   }
 
@@ -236,7 +240,9 @@ export class CreateTransferComponent {
     const translations = this.languages.map(lang => ({
       Language: lang,
       Name: this.getTranslationGroup(lang).value.name,
-      Description: this.getTranslationGroup(lang).value.description
+      Description: this.getTranslationGroup(lang).value.description,
+      MetaDescription: this.getTranslationGroup(lang).value.metaDescription,
+      MetaKeyWords: this.getTranslationGroup(lang).value.metaKeyWords
     }));
     formData.append('TranslationsJson', JSON.stringify(translations));
 

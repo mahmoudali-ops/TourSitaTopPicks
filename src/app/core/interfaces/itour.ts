@@ -18,6 +18,8 @@ export interface ITour {
   linkVideo: any
   referneceName: string
   slug: string
+  metaKeyWords:string
+  metaDescription:string
 }
 
 export interface IDetailedTour {
@@ -37,6 +39,8 @@ export interface IDetailedTour {
   destinationName: string
   titles: string
   descriptions: string
+  metaKeyWords:string
+  metaDescription:string
   linkVideo: any
   referneceName: string
   slug: string

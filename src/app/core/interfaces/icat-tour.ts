@@ -7,6 +7,8 @@ export interface ICatTour {
   titles: string
   descriptions: string
   referneceName: string
+  metaKeyWords:string
+  metaDescription:string
   slug: string
 }
 
@@ -17,6 +19,8 @@ export interface IdetailedCattour {
     isActive: boolean
     titles: string
     descriptions: string
+    metaKeyWords:string
+    metaDescription:string
     tours: ITour[]
   }
   

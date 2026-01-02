@@ -16,16 +16,22 @@
     </div>
 
     <!-- Destination -->
-    <div class="form-group mb-3">
-      <label class="form-label"><i class="fas fa-map-marker-alt"></i> Destination ID</label>
-      <input type="number" class="form-control" formControlName="fkDestinationId" placeholder="Enter Destination ID"
-        [ngClass]="{
-          'is-invalid': transferForm.get('fkDestinationId')?.invalid && (transferForm.get('fkDestinationId')?.touched || transferForm.get('fkDestinationId')?.dirty),
-          'is-valid': transferForm.get('fkDestinationId')?.valid && (transferForm.get('fkDestinationId')?.touched || transferForm.get('fkDestinationId')?.dirty)
-        }"/>
-      <div class="text-danger small mt-1" *ngIf="transferForm.get('fkDestinationId')?.invalid && (transferForm.get('fkDestinationId')?.touched || transferForm.get('fkDestinationId')?.dirty)">
-        Destination ID is required.
-      </div>
+    <div class="col-md-6 mb-3">
+      <label>Destination</label>
+  
+      <!-- visible -->
+      <input
+        type="text"
+        class="form-control"
+        value="Hurghada"
+        readonly
+      />
+  
+      <!-- hidden ID -->
+      <input
+        type="hidden"
+        formControlName="fkDestinationId"
+      />
     </div>
 
     <!-- Active Checkbox -->
@@ -90,6 +96,16 @@
         <label>Description</label>
         <textarea class="form-control" rows="2" formControlName="description" placeholder="Enter description"></textarea>
       </div>
+      <div class="form-group mb-2">
+
+        <label>metaKeywords</label>
+        <textarea class="form-control" rows="2" formControlName="metaKeywords" placeholder="Enter metaKeywords"></textarea>
+      </div>
+      <div class="form-group mb-2">
+        <label>metaDescription</label>
+        <textarea class="form-control" rows="2" formControlName="metaDescription" placeholder="Enter metaDescription"></textarea>
+      </div>
+
     </div>
 
     <!-- ========================= -->

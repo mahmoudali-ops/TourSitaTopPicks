@@ -57,7 +57,10 @@ export class CreateCatTourComponent {
   private createTranslationGroup(): FormGroup {
     return this.fb.group({
       title: ['', Validators.required],
-      description: ['',Validators.required]
+      description: ['',Validators.required],
+      metaDescription: [''],
+      metaKeywords: ['']
+
     });
   }
 
@@ -106,6 +109,12 @@ export class CreateCatTourComponent {
       if (group.get('description')?.invalid) {
         this.formErrors.push({ label: 'Description', lang });
       }
+      if (group.get('metaDescription')?.invalid) {
+        this.formErrors.push({ label: 'Meta Description', lang });
+      }
+      if (group.get('metaKeywords')?.invalid) {
+        this.formErrors.push({ label: 'Meta Keywords', lang });
+      }
     });
   }
 
@@ -128,7 +137,9 @@ export class CreateCatTourComponent {
     const translations = this.languages.map(lang => ({
       Language: lang,
       Title: this.getTranslationGroup(lang).value.title,
-      Description: this.getTranslationGroup(lang).value.description
+      Description: this.getTranslationGroup(lang).value.description,
+      MetaDescription: this.getTranslationGroup(lang).value.metaDescription,
+      MetaKeyWords: this.getTranslationGroup(lang).value.metaKeywords
     }));
 
     formData.append('TranslationsJson', JSON.stringify(translations));

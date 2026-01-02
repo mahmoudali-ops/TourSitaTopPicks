@@ -135,14 +135,14 @@
     </div>
 
     <!-- ========================= -->
-    <!-- Language Options & Video -->
+     <!-- Language Options & Video -->
     <!-- ========================= -->
     <div class="mb-3">
       <label>Language Options <span class="text-danger">*</span></label>
       <input 
         class="form-control" 
         formControlName="languageOptions" 
-        placeholder="en, de, nl" 
+        placeholder="English , Deutsch" 
         [ngClass]="{
           'is-invalid': tourForm.get('languageOptions')?.invalid && tourForm.get('languageOptions')?.touched
         }"
@@ -285,6 +285,20 @@
           <div class="invalid-feedback" *ngIf="getTranslationGroup(lang).get('description')?.invalid && getTranslationGroup(lang).get('description')?.touched">
             Description is required
           </div>
+
+          <textarea 
+            class="form-control mt-2" 
+            rows="2" 
+            formControlName="metaDescription" 
+            placeholder="Meta Description"
+          ></textarea>
+
+          <textarea 
+            class="form-control mt-2" 
+            rows="2" 
+            formControlName="metaKeywords" 
+            placeholder="Meta Keywords"
+          ></textarea>
         </div>
 
         <!-- Includes -->
@@ -451,4 +465,4 @@
       </li>
     </ul>
   </div>
-</div>
+</div> 

@@ -115,6 +115,8 @@ export class CreateTourComponent {
     return this.fb.group({
       title: ['', Validators.required],
       description: ['', Validators.required],
+      metaDescription: [''],
+      metaKeywords: ['']
     });
   }
 
@@ -268,12 +270,18 @@ export class CreateTourComponent {
     this.checkControl('endLocation', 'End Location');
     this.checkControl('languageOptions', 'Language Options');
 
+
     this.languages.forEach(lang => {
       const group = this.getTranslationGroup(lang);
       if (group.get('title')?.invalid)
         this.formErrors.push({ label: 'Title', lang });
       if (group.get('description')?.invalid)
         this.formErrors.push({ label: 'Description', lang });
+
+      if (group.get('metaKeywords')?.invalid)
+        this.formErrors.push({ label: 'metaKeywords', lang });
+      if (group.get('metaDescription')?.invalid)
+        this.formErrors.push({ label: 'metaDescription', lang });
     });
   }
 
@@ -335,7 +343,9 @@ export class CreateTourComponent {
     const translations = this.languages.map(lang => ({
       Language: lang,
       Title: this.getTranslationGroup(lang).value.title,
-      Description: this.getTranslationGroup(lang).value.description
+      Description: this.getTranslationGroup(lang).value.description,
+      metaDescription: this.getTranslationGroup(lang).value.metaDescription,
+      metaKeywords: this.getTranslationGroup(lang).value.metaKeywords
     }));
     formData.append('TranslationsJson', JSON.stringify(translations));
 

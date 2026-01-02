@@ -14,28 +14,30 @@ interface FormErrorSummary {
 @Component({
   selector: 'app-update-transfer',
   standalone: true,
-  imports: [ReactiveFormsModule,CommonModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './update-transfer.component.html',
   styleUrl: './update-transfer.component.css'
 })
-export class UpdateTransferComponent  {
+export class UpdateTransferComponent implements OnInit {
   private readonly toaster = inject(ToastrService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   languages = ['en', 'de', 'nl'];
   transferForm: FormGroup;
   formErrors: FormErrorSummary[] = [];
   transferId!: number;
+  isSubmitting = false;
 
   imagePreview: string | ArrayBuffer | null = null;
   selectedFile: File | null = null;
+  existingImage: string | null = null;
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   constructor(
     private fb: FormBuilder,
-    private transferService: TransferService,
-    private route: ActivatedRoute
+    private transferService: TransferService
   ) {
     this.transferForm = this.buildForm();
   }
@@ -52,7 +54,7 @@ export class UpdateTransferComponent  {
     return this.fb.group({
       referenceName: ['', Validators.required],
       isActive: [true],
-      fkDestinationId: [null, Validators.required],
+      fkDestinationId: [2, Validators.required],
 
       translations: this.fb.group({
         en: this.createTranslationGroup(),
@@ -89,7 +91,9 @@ export class UpdateTransferComponent  {
   private createTranslationGroup(): FormGroup {
     return this.fb.group({
       name: ['', Validators.required],
-      description: ['', Validators.required]
+      description: ['', Validators.required],
+      metaDescription: [''],
+      metaKeyWords: ['']
     });
   }
 
@@ -120,15 +124,25 @@ export class UpdateTransferComponent  {
   // Load transfer & patch
   // =========================
   loadTransfer() {
-    this.transferService.getAllDetaildedTransfers(this.transferId).subscribe(res => {
-      this.patchBasicData(res);
-      this.patchTranslations(res.translations);
-      this.patchPrices(res.pricesList);
-      this.patchText(res.includeds, 'includes');
-      this.patchText(res.notIncludeds, 'notIncludes');
-      this.patchText(res.highlights, 'highlights');
+    this.transferService.getAllDetaildedTransfers(this.transferId).subscribe({
+      next: (res) => {
+        this.patchBasicData(res);
+        this.patchTranslations(res.translations);
+        this.patchPrices(res.pricesList);
+        this.patchText(res.includeds, 'includes');
+        this.patchText(res.notIncludeds, 'notIncludes');
+        this.patchText(res.highlights, 'highlights');
 
-      this.imagePreview = `${environment.BaseUrl}/${res.imageCover}`;
+        if (res.imageCover) {
+          this.existingImage = `${environment.BaseUrl}/${res.imageCover}`;
+          this.imagePreview = this.existingImage;
+        }
+      },
+      error: (error) => {
+        console.error('Error loading transfer:', error);
+        this.toaster.error('Failed to load transfer data', 'Error');
+        this.router.navigate(['/admin/transfers']);
+      }
     });
   }
 
@@ -146,7 +160,9 @@ export class UpdateTransferComponent  {
       if (tr) {
         this.getTranslationGroup(lang).patchValue({
           name: tr.name,
-          description: tr.description
+          description: tr.description,
+          metaDescription: tr.metaDescription || '',
+          metaKeyWords: tr.metaKeyWords || ''
         });
       }
     });
@@ -239,25 +255,59 @@ export class UpdateTransferComponent  {
     this.selectedFile = event.target.files[0];
     const reader = new FileReader();
     reader.onload = () => this.imagePreview = reader.result;
-    if (this.selectedFile){
-    reader.readAsDataURL(this.selectedFile);
-  }
+    if (this.selectedFile) {
+      reader.readAsDataURL(this.selectedFile);
+    }
   }
 
   removeImage() {
     this.selectedFile = null;
-    this.imagePreview = null;
+    this.imagePreview = this.existingImage;
     this.fileInput.nativeElement.value = '';
+  }
+
+  // =========================
+  // Error Summary
+  // =========================
+  buildErrorSummary() {
+    this.formErrors = [];
+
+    this.checkControl('referenceName', 'Reference Name');
+    this.checkControl('fkDestinationId', 'Destination');
+
+    this.languages.forEach(lang => {
+      const group = this.getTranslationGroup(lang);
+      if (group.get('name')?.invalid && group.get('name')?.touched)
+        this.formErrors.push({ label: 'Name', lang });
+      if (group.get('description')?.invalid && group.get('description')?.touched)
+        this.formErrors.push({ label: 'Description', lang });
+      if (group.get('metaKeyWords')?.invalid && group.get('metaKeyWords')?.touched)
+        this.formErrors.push({ label: 'Meta Keywords', lang });
+      if (group.get('metaDescription')?.invalid && group.get('metaDescription')?.touched)
+        this.formErrors.push({ label: 'Meta Description', lang });
+    });
+  }
+
+  private checkControl(controlName: string, label: string) {
+    const control = this.transferForm.get(controlName);
+    if (control && control.invalid && control.touched)
+      this.formErrors.push({ label });
   }
 
   // =========================
   // Submit Update
   // =========================
   onSubmit() {
+    this.transferForm.markAllAsTouched();
+    this.buildErrorSummary();
+
     if (this.transferForm.invalid) {
-      this.toaster.error('Please complete required fields', 'Validation Error');
+      this.toaster.error('Please complete all required fields correctly', 'Validation Error');
       return;
     }
+
+    if (this.isSubmitting) return;
+    this.isSubmitting = true;
 
     const formData = new FormData();
     formData.append('ReferneceName', this.transferForm.value.referenceName);
@@ -277,7 +327,14 @@ export class UpdateTransferComponent  {
         this.toaster.success('Transfer updated successfully', 'Success');
         this.router.navigate(['/admin/transfers']);
       },
-      error: () => this.toaster.error('Error updating transfer', 'Error')
+      error: (error) => {
+        console.error('Error updating transfer:', error);
+        this.toaster.error('Error updating transfer. Please try again.', 'Error');
+        this.isSubmitting = false;
+      },
+      complete: () => {
+        this.isSubmitting = false;
+      }
     });
   }
 
@@ -287,7 +344,13 @@ export class UpdateTransferComponent  {
   private buildTranslations() {
     return this.languages.map(lang => {
       const tr = this.getTranslationGroup(lang).value;
-      return { Language: lang, Name: tr.name, Description: tr.description };
+      return { 
+        Language: lang, 
+        Name: tr.name, 
+        Description: tr.description, 
+        MetaDescription: tr.metaDescription, 
+        MetaKeyWords: tr.metaKeyWords 
+      };
     });
   }
 
@@ -316,5 +379,4 @@ export class UpdateTransferComponent  {
     });
     return result;
   }
-
 }

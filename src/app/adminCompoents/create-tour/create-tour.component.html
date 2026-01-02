@@ -146,7 +146,7 @@
       <input 
         class="form-control" 
         formControlName="languageOptions" 
-        placeholder="en, de, nl" 
+        placeholder="English . Deutsch" 
         [ngClass]="{
           'is-invalid': tourForm.get('languageOptions')?.invalid && tourForm.get('languageOptions')?.touched
         }"
@@ -235,6 +235,23 @@
           <div class="invalid-feedback" *ngIf="getTranslationGroup(lang).get('description')?.invalid && getTranslationGroup(lang).get('description')?.touched">
             Description is required
           </div>
+
+          <textarea 
+            class="form-control mt-2" 
+            rows="2" 
+            formControlName="metaDescription" 
+            placeholder="Meta Description"
+          ></textarea>
+
+          <textarea 
+            class="form-control mt-2" 
+            rows="2" 
+            formControlName="metaKeyWords" 
+            placeholder="Meta Key Words"
+          ></textarea>
+          
+
+          
         </div>
 
         <!-- Includes -->

@@ -140,6 +140,8 @@ export class UpdateTourComponent implements OnInit {
     return this.fb.group({
       title: ['', Validators.required],
       description: ['', Validators.required],
+      metaDescription: [''],
+      metaKeywords: ['']
     });
   }
 
@@ -180,7 +182,9 @@ export class UpdateTourComponent implements OnInit {
       if (translation) {
         this.getTranslationGroup(lang).patchValue({
           title: translation.title,
-          description: translation.description
+          description: translation.description,
+          metaDescription: translation.metaDescription || '',
+          metaKeywords: translation.metaKeyWords || ''
         });
       }
     });
@@ -427,10 +431,14 @@ export class UpdateTourComponent implements OnInit {
 
     this.languages.forEach(lang => {
       const group = this.getTranslationGroup(lang);
-      if (group.get('title')?.invalid)
+      if (group.get('title')?.invalid && group.get('title')?.touched)
         this.formErrors.push({ label: 'Title', lang });
-      if (group.get('description')?.invalid)
+      if (group.get('description')?.invalid && group.get('description')?.touched)
         this.formErrors.push({ label: 'Description', lang });
+      if (group.get('metaKeywords')?.invalid && group.get('metaKeywords')?.touched)
+        this.formErrors.push({ label: 'Meta Keywords', lang });
+      if (group.get('metaDescription')?.invalid && group.get('metaDescription')?.touched)
+        this.formErrors.push({ label: 'Meta Description', lang });
     });
   }
 
@@ -495,7 +503,9 @@ export class UpdateTourComponent implements OnInit {
     const translations = this.languages.map(lang => ({
       Language: lang,
       Title: this.getTranslationGroup(lang).value.title,
-      Description: this.getTranslationGroup(lang).value.description
+      Description: this.getTranslationGroup(lang).value.description,
+      MetaDescription: this.getTranslationGroup(lang).value.metaDescription,
+      MetaKeyWords: this.getTranslationGroup(lang).value.metaKeywords
     }));
     formData.append('TranslationsJson', JSON.stringify(translations));
 
@@ -552,7 +562,4 @@ export class UpdateTourComponent implements OnInit {
       }
     });
   }
-
- 
-  
 }
