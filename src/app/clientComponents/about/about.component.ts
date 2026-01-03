@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
-import { TranslatedPipe } from '../../core/pipes/translate.pipe';
 import { Meta, Title } from '@angular/platform-browser';
+import { TranslatedPipe } from './../../core/pipes/translate.pipe';
+import { Component, inject } from '@angular/core';
 
 @Component({
   selector: 'app-about',
@@ -11,8 +11,8 @@ import { Meta, Title } from '@angular/platform-browser';
 })
 export class AboutComponent {
 
-  constructor(private meta: Meta, private title: Title) {}
-
+  private readonly title=inject(Title);
+  private readonly meta=inject(Meta);
   ngOnInit() {
     this.title.setTitle(
       'About Top Picks Travels | Trusted Travel Agency in Hurghada'
