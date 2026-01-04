@@ -197,7 +197,7 @@ export const EN = {
       }
     }
   }
-  
+  ,HeroDiscription: "Discover Your Next Adventure"
   
   
   

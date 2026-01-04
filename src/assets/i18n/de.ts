@@ -197,6 +197,7 @@ export const DE = {
       }
     }
     
-    
+    ,HeroDiscription: "Entdecke dein nächstes Abenteuer"
+
     
   };

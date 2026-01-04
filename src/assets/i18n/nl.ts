@@ -194,5 +194,6 @@ export const NL = {
         }
       }
     }
-    
+    ,HeroDiscription: "Odkryj swoją następną przygodę"
+
   };
