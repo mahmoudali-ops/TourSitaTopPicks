@@ -1,4 +1,5 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { AfterViewInit, Component, Inject, PLATFORM_ID } from '@angular/core';
 declare global {
   interface Window {
     Tawk_API: any;
@@ -15,10 +16,17 @@ declare global {
 })
 export class TokComponent  implements AfterViewInit {
 
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+
   
   ngAfterViewInit(): void {
-    window.Tawk_API = window.Tawk_API || {};
-    window.Tawk_LoadStart = new Date();
+
+    if (!isPlatformBrowser(this.platformId)) {
+      return; // ⛔ وقف التنفيذ على السيرفر
+    }
+
+    (window as any).Tawk_API = (window as any).Tawk_API || {};
+    (window as any).Tawk_LoadStart = new Date();
 
     const s1 = document.createElement('script');
     s1.async = true;
@@ -27,10 +35,11 @@ export class TokComponent  implements AfterViewInit {
     s1.setAttribute('crossorigin', '*');
     document.body.appendChild(s1);
 
-    // Optional: تأخير التثبيت حتى يظهر أسفل الشمال
     s1.onload = () => {
-      // Tawk.to iframe يتحكم فيه CSS داخليًا
-      const iframe = document.querySelector('iframe[title="chat widget"]') as HTMLElement;
+      const iframe = document.querySelector(
+        'iframe[title="chat widget"]'
+      ) as HTMLElement | null;
+
       if (iframe) {
         iframe.style.left = '20px';
         iframe.style.right = 'auto';
