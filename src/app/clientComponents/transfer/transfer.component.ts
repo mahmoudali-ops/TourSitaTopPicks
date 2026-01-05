@@ -58,7 +58,7 @@ export class TransferComponent extends ReloadableComponent  {
       .subscribe({
         next: (res) => {
           this.AllTrasnferList.set(res.data);
-          console.log(this.AllTrasnferList());
+       
         },
         error: (err: HttpErrorResponse) => {
           console.log(err.message);
