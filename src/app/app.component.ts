@@ -25,6 +25,25 @@ export class AppComponent {
           if (typeof fbq === 'function') {
             fbq('track', 'PageView');
           }
+
+
+          
+        });
+    }
+
+    if (isPlatformBrowser(this.platformId)) {
+      this.router.events
+        .pipe(filter(event => event instanceof NavigationEnd))
+        .subscribe((event: NavigationEnd) => {
+
+          const gtag = (window as any)['gtag'];
+
+          if (typeof gtag === 'function') {
+            gtag('config', 'AW-17847385347', {
+              page_path: event.urlAfterRedirects
+            });
+          }
+
         });
     }
   }
