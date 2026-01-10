@@ -17,6 +17,7 @@ export class AppComponent {
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
+    
      if (isPlatformBrowser(this.platformId)) {
       this.router.events
         .pipe(
