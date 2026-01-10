@@ -19,33 +19,30 @@ export class AppComponent {
   ) {
     if (isPlatformBrowser(this.platformId)) {
       this.router.events
-        .pipe(filter(event => event instanceof NavigationEnd))
-        .subscribe(() => {
+        .pipe(
+          filter((event): event is NavigationEnd => event instanceof NavigationEnd)
+        )
+        .subscribe((event) => {
+    
+          // Facebook Pixel
           const fbq = (window as any)['fbq'];
           if (typeof fbq === 'function') {
             fbq('track', 'PageView');
           }
-
-
-          
-        });
-    }
-
-    if (isPlatformBrowser(this.platformId)) {
-      this.router.events
-        .pipe(filter(event => event instanceof NavigationEnd))
-        .subscribe((event: NavigationEnd) => {
-
+    
+          // Google Ads / Analytics
           const gtag = (window as any)['gtag'];
-
           if (typeof gtag === 'function') {
             gtag('config', 'AW-17847385347', {
               page_path: event.urlAfterRedirects
             });
           }
-
+    
         });
     }
+    
+
+  
   }
 
 }
