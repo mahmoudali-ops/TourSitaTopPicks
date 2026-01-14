@@ -17,7 +17,7 @@ import { Meta, Title } from '@angular/platform-browser';
   templateUrl: './transfers-detail.component.html',
   styleUrl: './transfers-detail.component.css'
 })
-export class TransfersDetailComponent  extends ReloadableComponent  {
+export class TransfersDetailComponent  extends ReloadableComponent   {
 
   // DetailedTransfer:ItransferWithPrices|null=null;
   DetailedTransfer = signal<ItransferWithPrices | null>(null);
