@@ -7,17 +7,17 @@ export class LanguageService {
   private platformId = inject(PLATFORM_ID);
 
   // signal لحفظ اللغة الحالية
-  public lang = signal<'en' | 'ar'|'de'|'nl'>('en');
+  public lang = signal<'en' | 'ar'|'de'|'nl'|'fr' >('en');
 
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
-      const savedLang = localStorage.getItem('lang') as 'en' | 'ar'|'de'|'nl';
+      const savedLang = localStorage.getItem('lang') as 'en' | 'ar'|'de'|'nl'|'fr';
       if (savedLang) this.lang.set(savedLang);
     }
   }
 
   // دالة لتغيير اللغة
-  setLanguage(lang: 'en' | 'ar'|'de'|'nl') {
+  setLanguage(lang: 'en' | 'ar'|'de'|'nl'|'fr') {
     this.lang.set(lang);
     if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem('lang', lang);
@@ -25,12 +25,12 @@ export class LanguageService {
   }
 
   // signal للغة الحالية
-  get currentLang(): Signal<'en' | 'ar'|'de'|'nl'> {
+  get currentLang(): Signal<'en' | 'ar'|'de'|'nl'|'fr'> {
     return this.lang;
   }
 
   // طريقة سريعة لإرجاع القيمة مباشرة
-  get currentLangValue(): 'en' | 'ar'|'de'|'nl' {
+  get currentLangValue(): 'en' | 'ar'|'de'|'nl'|'fr' {
     return this.lang();
   }
 }

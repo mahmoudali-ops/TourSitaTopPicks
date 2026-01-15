@@ -5,8 +5,10 @@ import { EN } from '../../../assets/i18n/en';
 import { DE } from '../../../assets/i18n/de';
 import { NL } from '../../../assets/i18n/nl';
 import { AR } from '../../../assets/i18n/ar';
+import { FR } from '../../../assets/i18n/fr';
 
-export type Lang = 'en' | 'de' | 'nl' | 'ar';
+
+export type Lang = 'en' | 'de' | 'nl' | 'ar'|'fr';
 
 @Injectable({ providedIn: 'root' })
 export class TranslationService {
@@ -21,7 +23,8 @@ export class TranslationService {
     en: EN,
     de: DE,
     nl: NL,
-    ar: AR
+    ar: AR,
+    fr: FR
   };
 
   // ✅ قراءة اللغة بأمان

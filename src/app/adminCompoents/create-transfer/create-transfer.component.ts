@@ -33,7 +33,7 @@ export class CreateTransferComponent {
   private readonly toaster = inject(ToastrService);
   private readonly router = inject(Router);
 
-  languages = ['en', 'de', 'nl'];
+  languages = ['en', 'de', 'nl', 'fr'];
 
   transferForm: FormGroup;
   formErrors: FormErrorSummary[] = [];

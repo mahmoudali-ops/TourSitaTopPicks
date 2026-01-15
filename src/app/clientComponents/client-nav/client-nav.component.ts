@@ -78,7 +78,7 @@ export class ClientNavComponent implements OnInit {
   }
 
   // Language
-  changeLang(lang: 'en' | 'de' | 'nl'): void {
+  changeLang(lang: 'en' | 'de' | 'nl'|'fr'): void {
     this.langService.setLanguage(lang);
     this.translationService.setLang(lang);
   }

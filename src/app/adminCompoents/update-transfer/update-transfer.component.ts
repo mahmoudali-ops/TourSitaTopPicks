@@ -23,7 +23,7 @@ export class UpdateTransferComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
-  languages = ['en', 'de', 'nl'];
+  languages = ['en', 'de', 'nl', 'fr'];
   transferForm: FormGroup;
   formErrors: FormErrorSummary[] = [];
   transferId!: number;
@@ -59,31 +59,36 @@ export class UpdateTransferComponent implements OnInit {
       translations: this.fb.group({
         en: this.createTranslationGroup(),
         de: this.createTranslationGroup(),
-        nl: this.createTranslationGroup()
+        nl: this.createTranslationGroup(),
+        fr: this.createTranslationGroup()
       }),
 
       prices: this.fb.group({
         en: this.fb.array([]),
         de: this.fb.array([]),
-        nl: this.fb.array([])
+        nl: this.fb.array([]),
+        fr: this.fb.array([])
       }),
 
       includes: this.fb.group({
         en: this.fb.array([]),
         de: this.fb.array([]),
-        nl: this.fb.array([])
+        nl: this.fb.array([]),
+        fr: this.fb.array([])
       }),
 
       notIncludes: this.fb.group({
         en: this.fb.array([]),
         de: this.fb.array([]),
-        nl: this.fb.array([])
+        nl: this.fb.array([]),
+        fr: this.fb.array([])
       }),
 
       highlights: this.fb.group({
         en: this.fb.array([]),
         de: this.fb.array([]),
-        nl: this.fb.array([])
+        nl: this.fb.array([]),
+        fr: this.fb.array([])
       })
     });
   }

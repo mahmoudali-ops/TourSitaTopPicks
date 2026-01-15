@@ -32,7 +32,7 @@ export class CreateTourComponent {
   private readonly toaster = inject(ToastrService);
   private readonly router = inject(Router);
 
-  languages = ['en', 'de', 'nl'];
+  languages = ['en', 'de', 'nl', 'fr'];
   selectedLang: string = 'en';
   categories = [
     { id: 28, name: 'sea tours hurghada' },

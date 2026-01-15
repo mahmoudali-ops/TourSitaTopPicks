@@ -18,7 +18,7 @@ export class CreateCatTourComponent {
   private readonly toaster = inject(ToastrService);
   private readonly router = inject(Router);
 
-  languages = ['en', 'de', 'nl'];
+  languages = ['en', 'de', 'nl','fr'];
 
   catTourForm: FormGroup;
   formErrors: { label: string; lang?: string }[] = [];

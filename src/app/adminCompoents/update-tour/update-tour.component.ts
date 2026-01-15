@@ -53,7 +53,7 @@ export class UpdateTourComponent implements OnInit {
     { id: 39, name: 'luxor tours hurghada' },
     { id: 40, name: 'safari tours hurghada' }
   ];
-  languages = ['en', 'de', 'nl'];
+  languages = ['en', 'de', 'nl', 'fr'];
   selectedLang: string = 'en';
   tourId!: number;
   isSubmitting = false;
@@ -114,24 +114,29 @@ export class UpdateTourComponent implements OnInit {
         en: this.createTranslationGroup(),
         de: this.createTranslationGroup(),
         nl: this.createTranslationGroup(),
+
+        fr: this.createTranslationGroup(),
       }),
 
       includes: this.fb.group({
         en: this.fb.array([]),
         de: this.fb.array([]),
         nl: this.fb.array([]),
+        fr: this.fb.array([]),
       }),
 
       notIncludes: this.fb.group({
         en: this.fb.array([]),
         de: this.fb.array([]),
         nl: this.fb.array([]),
+        fr: this.fb.array([]),
       }),
 
       highlights: this.fb.group({
         en: this.fb.array([]),
         de: this.fb.array([]),
         nl: this.fb.array([]),
+        fr: this.fb.array([]),
       }),
     });
   }
