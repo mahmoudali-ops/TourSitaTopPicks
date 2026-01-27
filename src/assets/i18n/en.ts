@@ -68,7 +68,7 @@ export const EN = {
     INFO: {
       KNEW_BEFORE_GO: 'Knew Before You Go',
       LIST: {
-        HOTEL_TRANSFERS: 'Hotel transfers are included for most locations in Marsa Alam. Additional charges may apply for remote areas.',
+        HOTEL_TRANSFERS: 'Hotel transfers are included for most locations in Hurghada. Additional charges may apply for remote areas.',
         BEGINNERS_SNORKELERS: 'Suitable for beginners and experienced snorkelers. A guide will be available to assist.',
         SEA_TURTLES: 'Sightings of sea turtles and dugongs are common but cannot be guaranteed, as they are wild animals.',
         BUFFET_LUNCH: 'A buffet lunch and soft drinks are included. Please inform us in advance of any dietary restrictions.',

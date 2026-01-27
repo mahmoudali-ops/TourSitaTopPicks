@@ -70,7 +70,7 @@ export const NL = {
     INFO: {
       KNEW_BEFORE_GO: 'Do wiedzy przed wyjazdem',
       LIST: {
-        HOTEL_TRANSFERS: 'Transfery hotelowe są wliczone w cenę dla większości lokalizacji w Marsa Alam. W przypadku odległych miejsc mogą obowiązywać dodatkowe opłaty.',
+        HOTEL_TRANSFERS: 'Transfery hotelowe są wliczone w cenę dla większości lokalizacji w HUrghada. W przypadku odległych miejsc mogą obowiązywać dodatkowe opłaty.',
         BEGINNERS_SNORKELERS: 'Odpowiednie dla początkujących i doświadczonych nurków z rurką. Przewodnik będzie dostępny, aby pomóc.',
         SEA_TURTLES: 'Spotkania z żółwiami morskimi i dugongami są częste, ale nie można ich zagwarantować, ponieważ są to zwierzęta dzikie.',
         BUFFET_LUNCH: 'Wliczony jest bufet i napoje bezalkoholowe. Prosimy o wcześniejsze poinformowanie nas o wszelkich ograniczeniach dietetycznych.',

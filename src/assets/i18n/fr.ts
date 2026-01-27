@@ -65,7 +65,7 @@ export const FR = {
     INFO: {
       KNEW_BEFORE_GO: 'À savoir avant de partir',
       LIST: {
-        HOTEL_TRANSFERS: 'Les transferts depuis/vers l’hôtel sont inclus pour la plupart des zones de Marsa Alam. Des suppléments peuvent s’appliquer pour les zones éloignées.',
+        HOTEL_TRANSFERS: 'Les transferts depuis/vers l’hôtel sont inclus pour la plupart des zones de Hurghada. Des suppléments peuvent s’appliquer pour les zones éloignées.',
         BEGINNERS_SNORKELERS: 'Convient aux débutants et aux plongeurs expérimentés. Un guide sera disponible pour assister.',
         SEA_TURTLES: 'Les observations de tortues marines et de dugongs sont fréquentes mais ne peuvent être garanties, car ce sont des animaux sauvages.',
         BUFFET_LUNCH: 'Un déjeuner buffet et des boissons non alcoolisées sont inclus. Veuillez nous informer à l’avance de tout régime alimentaire particulier.',

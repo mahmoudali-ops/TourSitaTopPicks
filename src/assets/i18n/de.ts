@@ -67,7 +67,7 @@ export const DE = {
     INFO: {
       KNEW_BEFORE_GO: 'Wissenswertes vor der Abreise',
       LIST: {
-        HOTEL_TRANSFERS: 'Hoteltransfers sind für die meisten Orte in Marsa Alam inklusive. Für abgelegene Gebiete können zusätzliche Gebühren anfallen.',
+        HOTEL_TRANSFERS: 'Hoteltransfers sind für die meisten Orte in Hurghada inklusive. Für abgelegene Gebiete können zusätzliche Gebühren anfallen.',
         BEGINNERS_SNORKELERS: 'Geeignet für Anfänger und erfahrene Schnorchler. Ein Guide steht zur Unterstützung zur Verfügung.',
         SEA_TURTLES: 'Sichtungen von Meeresschildkröten und Dugongs sind häufig, können jedoch nicht garantiert werden, da es sich um wilde Tiere handelt.',
         BUFFET_LUNCH: 'Ein Buffet-Mittagessen und Softdrinks sind inbegriffen. Bitte informieren Sie uns im Voraus über spezielle Ernährungswünsche.',
