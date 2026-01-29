@@ -65,6 +65,10 @@ export const FR = {
     INFO: {
       KNEW_BEFORE_GO: 'À savoir avant de partir',
       LIST: {
+        
+    PASSPORT_COPY: 'Veuillez fournir une copie de votre passeport pour l’autorisation quotidienne.',
+    SHOPPING_TIME: 'Un temps libre pour le shopping est prévu, vous permettant de profiter de l’expérience et de négocier les prix directement avec les vendeurs.'
+      ,
         HOTEL_TRANSFERS: 'Les transferts depuis/vers l’hôtel sont inclus pour la plupart des zones de Hurghada. Des suppléments peuvent s’appliquer pour les zones éloignées.',
         BEGINNERS_SNORKELERS: 'Convient aux débutants et aux plongeurs expérimentés. Un guide sera disponible pour assister.',
         SEA_TURTLES: 'Les observations de tortues marines et de dugongs sont fréquentes mais ne peuvent être garanties, car ce sont des animaux sauvages.',

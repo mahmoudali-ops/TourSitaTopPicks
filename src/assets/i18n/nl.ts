@@ -70,6 +70,10 @@ export const NL = {
     INFO: {
       KNEW_BEFORE_GO: 'Do wiedzy przed wyjazdem',
       LIST: {
+        
+    PASSPORT_COPY: 'Prosimy o przesłanie kopii paszportu w celu uzyskania codziennego zezwolenia.',
+    SHOPPING_TIME: 'Przewidziany jest czas na zakupy, podczas którego możesz samodzielnie cieszyć się zakupami i negocjować ceny bezpośrednio ze sprzedawcami.'
+      ,
         HOTEL_TRANSFERS: 'Transfery hotelowe są wliczone w cenę dla większości lokalizacji w HUrghada. W przypadku odległych miejsc mogą obowiązywać dodatkowe opłaty.',
         BEGINNERS_SNORKELERS: 'Odpowiednie dla początkujących i doświadczonych nurków z rurką. Przewodnik będzie dostępny, aby pomóc.',
         SEA_TURTLES: 'Spotkania z żółwiami morskimi i dugongami są częste, ale nie można ich zagwarantować, ponieważ są to zwierzęta dzikie.',

@@ -67,6 +67,10 @@ export const DE = {
     INFO: {
       KNEW_BEFORE_GO: 'Wissenswertes vor der Abreise',
       LIST: {
+        
+    PASSPORT_COPY: 'Bitte senden Sie eine Kopie Ihres Reisepasses für die tägliche Genehmigung.',
+    SHOPPING_TIME: 'Es ist Zeit zum Einkaufen vorgesehen, in der Sie das Erlebnis selbst genießen und die Preise direkt mit den Verkäufern verhandeln können.'
+      ,
         HOTEL_TRANSFERS: 'Hoteltransfers sind für die meisten Orte in Hurghada inklusive. Für abgelegene Gebiete können zusätzliche Gebühren anfallen.',
         BEGINNERS_SNORKELERS: 'Geeignet für Anfänger und erfahrene Schnorchler. Ein Guide steht zur Unterstützung zur Verfügung.',
         SEA_TURTLES: 'Sichtungen von Meeresschildkröten und Dugongs sind häufig, können jedoch nicht garantiert werden, da es sich um wilde Tiere handelt.',
